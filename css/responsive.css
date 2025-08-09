@@ -86,7 +86,7 @@
     
     /* Typography */
     h1 { font-size: 2.5rem; }
-    h2 { font-size: 2rem; }
+    h2 { font-size: 1.8rem; }
     h3 { font-size: 1.5rem; }
     
     .hero-title {
@@ -100,35 +100,35 @@
     
     /* Hero Section */
     .hero {
-        min-height: 90vh;
+        min-height: auto;
         padding: 2rem 0 1rem;
     }
     
     /* Hero Icons - Mobile Size */
     .hero-icon, .service-hero .hero-icon {
-        width: 250px;
-        height: 250px;
-        margin-bottom: 1.5rem;
+        width: 180px;
+        height: 180px;
+        margin-bottom: 1rem;
     }
 
     .hero-icon i, .service-hero .hero-icon i {
-        font-size: 80px;
+        font-size: 60px;
     }
 
     .hero h1, .service-hero h1 {
-        font-size: 2rem;
+        font-size: 1.8rem;
         margin-bottom: 1rem;
         line-height: 1.2;
     }
 
     .hero .lead, .service-hero .lead {
         font-size: 1rem;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         padding: 0 1rem;
     }
 
     .service-hero {
-        padding: 4rem 0 2rem;
+        padding: 3rem 0 1.5rem;
     }
     .hero-content {
         gap: 2rem;
@@ -302,7 +302,7 @@
     
     /* Typography */
     .hero-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
     
     .section-title {
@@ -418,7 +418,7 @@
 /* Landscape Mobile */
 @media screen and (max-height: 500px) and (orientation: landscape) {
     .hero {
-        min-height: 90vh;
+        min-height: auto;
         padding: 1rem 0;
     }
     
