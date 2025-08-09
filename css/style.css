@@ -2888,4 +2888,21 @@ a:focus {
     .visual-icon i {
         font-size: 2rem;
     }
+
+    /* Mobile Navigation Dark Mode */
+    @media screen and (max-width: 768px) {
+        .nav-menu {
+            background: rgba(26, 26, 26, 0.98) !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-link {
+            color: #e0e0e0 !important;
+        }
+        
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: #0078ff !important;
+        }
+    }
 }
