@@ -1632,6 +1632,23 @@ a {
     position: relative;
 }
 
+.hero-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.hero-icon i {
+    color: white;
+    font-size: 2rem;
+}
+
 .breadcrumb {
     margin-bottom: 1rem;
     font-size: 0.9rem;
@@ -1696,6 +1713,43 @@ a {
 .benefit p {
     color: #666;
     margin: 0;
+    font-size: 0.9rem;
+}
+
+.visual-icon-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.visual-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2rem 1rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.visual-icon:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.visual-icon i {
+    font-size: 2.5rem;
+    color: #667eea;
+    margin-bottom: 1rem;
+}
+
+.visual-icon span {
+    font-weight: 600;
+    color: #333;
     font-size: 0.9rem;
 }
 
@@ -2802,5 +2856,29 @@ a:focus {
     .related-post img {
         width: 80px;
         height: 80px;
+    }
+    
+    .visual-icon-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        max-width: 280px;
+    }
+    
+    .visual-icon {
+        padding: 1.5rem 0.5rem;
+    }
+    
+    .visual-icon i {
+        font-size: 2rem;
+    }
+    
+    .hero-icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .hero-icon i {
+        font-size: 1.5rem;
     }
 }

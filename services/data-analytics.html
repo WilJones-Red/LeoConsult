@@ -15,6 +15,15 @@
     
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Analytics & Tracking -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BPKJS0RX47"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-BPKJS0RX47');
+    </script>
 </head>
 <body>
     <!-- Navigation -->
@@ -47,6 +56,9 @@
     <section class="service-hero">
         <div class="container">
             <div class="hero-content">
+                <div class="hero-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
                 <div class="breadcrumb">
                     <a href="../index.html">Home</a>
                     <span>/</span>
@@ -125,7 +137,24 @@
                     </div>
                 </div>
                 <div class="overview-visual">
-                    <img src="../assets/data-analytics-overview.png" alt="Data Analytics Process">
+                    <div class="visual-icon-grid">
+                        <div class="visual-icon">
+                            <i class="fas fa-database"></i>
+                            <span>Data Collection</span>
+                        </div>
+                        <div class="visual-icon">
+                            <i class="fas fa-cogs"></i>
+                            <span>Processing</span>
+                        </div>
+                        <div class="visual-icon">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>Analysis</span>
+                        </div>
+                        <div class="visual-icon">
+                            <i class="fas fa-lightbulb"></i>
+                            <span>Insights</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

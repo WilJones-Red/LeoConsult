@@ -83,12 +83,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // ========================================
     
     function animateCounter(element, start, end, duration) {
+        if (isNaN(end) || end <= 0) {
+            return; // Don't animate invalid numbers
+        }
+        
         let startTimestamp = null;
         const step = (timestamp) => {
             if (!startTimestamp) startTimestamp = timestamp;
             const progress = Math.min((timestamp - startTimestamp) / duration, 1);
             const value = Math.floor(progress * (end - start) + start);
-            element.textContent = value + (element.dataset.suffix || '');
+            const suffix = element.dataset.suffix || '';
+            element.textContent = value + suffix;
             if (progress < 1) {
                 window.requestAnimationFrame(step);
             }
@@ -102,11 +107,16 @@ document.addEventListener('DOMContentLoaded', function() {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const counter = entry.target;
-                const text = counter.textContent;
-                const number = parseInt(text.replace(/[^\d]/g, ''));
-                const suffix = text.replace(/[\d]/g, '');
-                counter.dataset.suffix = suffix;
-                animateCounter(counter, 0, number, 2000);
+                const text = counter.textContent.trim();
+                const numberMatch = text.match(/\d+/);
+                const number = numberMatch ? parseInt(numberMatch[0]) : 0;
+                const suffix = text.replace(/\d+/g, '');
+                
+                // Only animate if we have a valid number
+                if (!isNaN(number) && number > 0) {
+                    counter.dataset.suffix = suffix;
+                    animateCounter(counter, 0, number, 2000);
+                }
                 counterObserver.unobserve(counter);
             }
         });

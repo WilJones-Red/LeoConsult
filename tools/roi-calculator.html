@@ -704,11 +704,16 @@
             // Calculate 3-year net benefit
             const threeYearBenefits = (totalAnnualBenefits * 3) - (maintenanceCost * 2) - initialInvestment;
 
-            // Update results
-            document.getElementById('roi-percentage').textContent = roiPercentage.toFixed(1) + '%';
-            document.getElementById('net-benefit').textContent = '$' + netAnnualBenefit.toLocaleString();
-            document.getElementById('payback-period').textContent = paybackPeriod.toFixed(1) + ' months';
-            document.getElementById('three-year-roi').textContent = '$' + threeYearBenefits.toLocaleString();
+            // Update results with NaN safety checks
+            const safeROI = isNaN(roiPercentage) || !isFinite(roiPercentage) ? 0 : roiPercentage;
+            const safeBenefit = isNaN(netAnnualBenefit) || !isFinite(netAnnualBenefit) ? 0 : netAnnualBenefit;
+            const safePayback = isNaN(paybackPeriod) || !isFinite(paybackPeriod) ? 0 : paybackPeriod;
+            const safeThreeYear = isNaN(threeYearBenefits) || !isFinite(threeYearBenefits) ? 0 : threeYearBenefits;
+            
+            document.getElementById('roi-percentage').textContent = safeROI.toFixed(1) + '%';
+            document.getElementById('net-benefit').textContent = '$' + safeBenefit.toLocaleString();
+            document.getElementById('payback-period').textContent = safePayback.toFixed(1) + ' months';
+            document.getElementById('three-year-roi').textContent = '$' + safeThreeYear.toLocaleString();
 
             // Show results
             document.getElementById('results-container').classList.add('show');
