@@ -1,0 +1,17 @@
+{
+  "name": "leoconsult-website",
+  "version": "1.0.0",
+  "description": "Data Analytics & Business Consulting Website",
+  "main": "index.html",
+  "scripts": {
+    "dev": "live-server --port=3000",
+    "build": "echo 'Building project...'",
+    "deploy": "echo 'Deploying to production...'"
+  },
+  "keywords": ["data-analytics", "business-consulting", "website"],
+  "author": "Leo Consult",
+  "license": "MIT",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

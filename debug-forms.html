@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Formspree Debug Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        form { background: #f5f5f5; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        input, select, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .debug-info { background: #e9ecef; padding: 15px; margin: 20px 0; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Formspree Debug Test</h1>
+    
+    <div class="debug-info">
+        <h3>Debug Information:</h3>
+        <p><strong>Contact Form Endpoint:</strong> https://formspree.io/f/xblkqjlp</p>
+        <p><strong>Audit Form Endpoint:</strong> https://formspree.io/f/mnnzlqnl</p>
+        <p><strong>Test Time:</strong> <span id="timestamp"></span></p>
+    </div>
+
+    <h2>🧪 Test 1: Minimal Contact Form</h2>
+    <form action="https://formspree.io/f/xblkqjlp" method="POST" id="test-contact">
+        <input type="text" name="firstName" placeholder="First Name" required>
+        <input type="text" name="lastName" placeholder="Last Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="text" name="company" placeholder="Company" required>
+        <select name="service" required>
+            <option value="">Select Service</option>
+            <option value="test">Test Service</option>
+        </select>
+        <textarea name="message" placeholder="Test message" required>This is a test submission from the debug form.</textarea>
+        <button type="submit">🚀 Test Contact Form</button>
+    </form>
+
+    <h2>🧪 Test 2: Minimal Audit Form</h2>
+    <form action="https://formspree.io/f/mnnzlqnl" method="POST" id="test-audit">
+        <input type="text" name="name" placeholder="Full Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="text" name="company" placeholder="Company" required>
+        <select name="company-size" required>
+            <option value="">Company Size</option>
+            <option value="test">Test Size</option>
+        </select>
+        <button type="submit">🚀 Test Audit Form</button>
+    </form>
+
+    <h2>📊 Debug Results</h2>
+    <div id="debug-results"></div>
+
+    <script>
+        // Add timestamp
+        document.getElementById('timestamp').textContent = new Date().toLocaleString();
+
+        // Debug logging
+        const debugResults = document.getElementById('debug-results');
+        
+        function logDebug(message) {
+            const p = document.createElement('p');
+            p.innerHTML = `<strong>${new Date().toLocaleTimeString()}:</strong> ${message}`;
+            debugResults.appendChild(p);
+        }
+
+        // Monitor both forms
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                logDebug(`Form submitted: ${this.id}`);
+                logDebug(`Action: ${this.action}`);
+                logDebug(`Method: ${this.method}`);
+                
+                // Don't prevent default - let it submit to Formspree
+                logDebug('Allowing form to submit to Formspree...');
+            });
+        });
+
+        // Check if we can reach Formspree
+        fetch('https://formspree.io/f/xblkqjlp', {
+            method: 'GET',
+            mode: 'no-cors'
+        }).then(() => {
+            logDebug('✅ Can reach Formspree contact endpoint');
+        }).catch(error => {
+            logDebug('❌ Cannot reach Formspree: ' + error.message);
+        });
+
+        logDebug('🔍 Debug test page loaded successfully');
+    </script>
+</body>
+</html>

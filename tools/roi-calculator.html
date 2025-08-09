@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROI Calculator - Data Analytics Investment Tool | Leo Consult</title>
+    <meta name="description" content="Calculate the potential return on investment for your data analytics initiatives with our free ROI calculator tool.">
+    <meta name="keywords" content="ROI calculator, data analytics ROI, business intelligence ROI, analytics investment calculator">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../assets/fab.png">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BPKJS0RX47"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-BPKJS0RX47');
+    </script>
+
+    <style>
+        .calculator-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .calculator-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .calculator-header h1 {
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .calculator-header p {
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        .calculator-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .form-section h3 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+            transition: color 0.3s ease;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fff;
+            color: #333;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .currency-input {
+            position: relative;
+        }
+
+        .currency-input::before {
+            content: '$';
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .currency-input input {
+            padding-left: 30px;
+        }
+
+        .percentage-input {
+            position: relative;
+        }
+
+        .percentage-input::after {
+            content: '%';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .percentage-input input {
+            padding-right: 30px;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .results-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .results-container.show {
+            display: block;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .result-card {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .disclaimer {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .tips-section {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .tips-section h3 {
+            color: #1a1a1a;
+            transition: color 0.3s ease;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .tip-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            transition: all 0.3s ease;
+        }
+
+        .tip-card h4 {
+            color: #1a1a1a;
+            transition: color 0.3s ease;
+        }
+
+        .tip-card p {
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        /* Dark Mode Styles */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #1a1a1a !important;
+                color: #e0e0e0 !important;
+            }
+
+            .calculator-container {
+                background: #2d3748 !important;
+                box-shadow: 0 10px 30px rgba(255,255,255,0.1) !important;
+            }
+
+            .calculator-header h1 {
+                color: #e0e0e0 !important;
+            }
+
+            .calculator-header p {
+                color: #d0d0d0 !important;
+            }
+
+            .form-section {
+                background: #1a202c !important;
+                border-left-color: #667eea !important;
+            }
+
+            .form-group label {
+                color: #e0e0e0 !important;
+            }
+
+            .form-group input {
+                background: #2d3748 !important;
+                border-color: #4a5568 !important;
+                color: #e0e0e0 !important;
+            }
+
+            .form-group input:focus {
+                border-color: #667eea !important;
+            }
+
+            .currency-input::before,
+            .percentage-input::after {
+                color: #a0aec0 !important;
+            }
+
+            .disclaimer {
+                background: #2d3748 !important;
+                border-color: #667eea !important;
+                color: #e0e0e0 !important;
+            }
+
+            .tips-section {
+                background: #1a202c !important;
+            }
+
+            .tips-section h3 {
+                color: #e0e0e0 !important;
+            }
+
+            .tip-card {
+                background: #2d3748 !important;
+                border-left-color: #28a745 !important;
+            }
+
+            .tip-card h4 {
+                color: #e0e0e0 !important;
+            }
+
+            .tip-card p {
+                color: #d0d0d0 !important;
+            }
+
+            .navbar {
+                background: #1a1a1a !important;
+            }
+
+            .footer {
+                background: #1a1a1a !important;
+                color: #e0e0e0 !important;
+            }
+        }
+
+        /* Force dark mode for devices that have dark mode enabled */
+        [data-theme="dark"] body,
+        .dark-mode body {
+            background: #1a1a1a !important;
+            color: #e0e0e0 !important;
+        }
+
+        [data-theme="dark"] .calculator-container,
+        .dark-mode .calculator-container {
+            background: #2d3748 !important;
+            box-shadow: 0 10px 30px rgba(255,255,255,0.1) !important;
+        }
+
+        [data-theme="dark"] .calculator-header h1,
+        .dark-mode .calculator-header h1 {
+            color: #e0e0e0 !important;
+        }
+
+        [data-theme="dark"] .calculator-header p,
+        .dark-mode .calculator-header p {
+            color: #d0d0d0 !important;
+        }
+
+        [data-theme="dark"] .form-section,
+        .dark-mode .form-section {
+            background: #1a202c !important;
+            border-left-color: #667eea !important;
+        }
+
+        [data-theme="dark"] .form-group label,
+        .dark-mode .form-group label {
+            color: #e0e0e0 !important;
+        }
+
+        [data-theme="dark"] .form-group input,
+        .dark-mode .form-group input {
+            background: #2d3748 !important;
+            border-color: #4a5568 !important;
+            color: #e0e0e0 !important;
+        }
+
+        [data-theme="dark"] .form-group input:focus,
+        .dark-mode .form-group input:focus {
+            border-color: #667eea !important;
+        }
+
+        [data-theme="dark"] .currency-input::before,
+        [data-theme="dark"] .percentage-input::after,
+        .dark-mode .currency-input::before,
+        .dark-mode .percentage-input::after {
+            color: #a0aec0 !important;
+        }
+
+        [data-theme="dark"] .disclaimer,
+        .dark-mode .disclaimer {
+            background: #2d3748 !important;
+            border-color: #667eea !important;
+            color: #e0e0e0 !important;
+        }
+
+        [data-theme="dark"] .tips-section,
+        .dark-mode .tips-section {
+            background: #1a202c !important;
+        }
+
+        [data-theme="dark"] .tips-section h3,
+        .dark-mode .tips-section h3 {
+            color: #e0e0e0 !important;
+        }
+
+        [data-theme="dark"] .tip-card,
+        .dark-mode .tip-card {
+            background: #2d3748 !important;
+            border-left-color: #28a745 !important;
+        }
+
+        [data-theme="dark"] .tip-card h4,
+        .dark-mode .tip-card h4 {
+            color: #e0e0e0 !important;
+        }
+
+        [data-theme="dark"] .tip-card p,
+        .dark-mode .tip-card p {
+            color: #d0d0d0 !important;
+        }
+
+        [data-theme="dark"] .navbar,
+        .dark-mode .navbar {
+            background: #1a1a1a !important;
+        }
+
+        [data-theme="dark"] .footer,
+        .dark-mode .footer {
+            background: #1a1a1a !important;
+            color: #e0e0e0 !important;
+        }
+
+        @media (max-width: 768px) {
+            .calculator-form {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .result-value {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="../index.html">
+                    <img src="../assets/Logosep.png" alt="Leo Consult Logo" class="logo-img">
+                    <span class="logo-text">Leo Consult</span>
+                </a>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <a href="../index.html#home" class="nav-link">Home</a>
+                <a href="../index.html#services" class="nav-link">Services</a>
+                <a href="../index.html#about" class="nav-link">About</a>
+                <a href="../index.html#case-studies" class="nav-link">Case Studies</a>
+                <a href="../blog/index.html" class="nav-link">Blog</a>
+                <a href="../index.html#contact" class="nav-link">Contact</a>
+                <a href="../index.html#contact" class="nav-link cta-btn">Get Free Consultation</a>
+            </div>
+            <div class="nav-toggle" id="nav-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Calculator Section -->
+    <section style="padding: 6rem 0; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh;">
+        <div class="container">
+            <div class="calculator-container">
+                <div class="calculator-header">
+                    <h1>Data Analytics ROI Calculator</h1>
+                    <p>Calculate the potential return on investment for your data analytics initiatives. Get instant insights into your expected ROI, payback period, and long-term benefits.</p>
+                </div>
+
+                <form class="calculator-form" id="roi-calculator">
+                    <div class="form-section">
+                        <h3><i class="fas fa-dollar-sign"></i> Investment Costs</h3>
+                        
+                        <div class="form-group">
+                            <label for="software-cost">Software & Licensing Costs</label>
+                            <div class="currency-input">
+                                <input type="number" id="software-cost" placeholder="50000" min="0" step="1000">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="implementation-cost">Implementation & Setup Costs</label>
+                            <div class="currency-input">
+                                <input type="number" id="implementation-cost" placeholder="25000" min="0" step="1000">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="training-cost">Training & Change Management</label>
+                            <div class="currency-input">
+                                <input type="number" id="training-cost" placeholder="15000" min="0" step="1000">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="maintenance-cost">Annual Maintenance & Support</label>
+                            <div class="currency-input">
+                                <input type="number" id="maintenance-cost" placeholder="10000" min="0" step="1000">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3><i class="fas fa-chart-line"></i> Expected Benefits</h3>
+                        
+                        <div class="form-group">
+                            <label for="revenue-increase">Annual Revenue Increase</label>
+                            <div class="currency-input">
+                                <input type="number" id="revenue-increase" placeholder="100000" min="0" step="5000">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cost-savings">Annual Cost Savings</label>
+                            <div class="currency-input">
+                                <input type="number" id="cost-savings" placeholder="50000" min="0" step="5000">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="efficiency-gains">Productivity Improvement</label>
+                            <div class="percentage-input">
+                                <input type="number" id="efficiency-gains" placeholder="20" min="0" max="100" step="1">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="current-revenue">Current Annual Revenue</label>
+                            <div class="currency-input">
+                                <input type="number" id="current-revenue" placeholder="1000000" min="0" step="50000">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <button type="button" class="calculate-btn" onclick="calculateROI()">
+                    <i class="fas fa-calculator"></i> Calculate ROI
+                </button>
+
+                <div class="results-container" id="results-container">
+                    <h2>Your Analytics ROI Results</h2>
+                    <div class="results-grid">
+                        <div class="result-card">
+                            <div class="result-value" id="roi-percentage">0%</div>
+                            <div class="result-label">Annual ROI</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-value" id="net-benefit">$0</div>
+                            <div class="result-label">Net Annual Benefit</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-value" id="payback-period">0</div>
+                            <div class="result-label">Payback Period (Months)</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-value" id="three-year-roi">$0</div>
+                            <div class="result-label">3-Year Net Benefit</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 2rem;">
+                        <a href="../index.html#contact" class="btn btn-secondary" style="background: white; color: #667eea; margin-right: 1rem;">Get Professional ROI Assessment</a>
+                        <a href="../blog/roi-data-investments.html" class="btn btn-outline" style="border: 2px solid white; color: white;">Learn ROI Best Practices</a>
+                    </div>
+                </div>
+
+                <div class="disclaimer">
+                    <strong>Disclaimer:</strong> This calculator provides estimates based on the inputs you provide. Actual results may vary based on implementation quality, user adoption, data quality, and other factors. For a comprehensive ROI analysis, consider consulting with our analytics experts.
+                </div>
+
+                <div class="tips-section">
+                    <h3>💡 Tips for Maximizing Your Analytics ROI</h3>
+                    <div class="tips-grid">
+                        <div class="tip-card">
+                            <h4><i class="fas fa-target"></i> Start with High-Impact Use Cases</h4>
+                            <p>Focus on analytics applications that directly impact revenue, reduce major costs, or improve critical business processes.</p>
+                        </div>
+                        <div class="tip-card">
+                            <h4><i class="fas fa-users"></i> Ensure Strong User Adoption</h4>
+                            <p>Invest in training and change management. The best analytics tools are worthless if your team doesn't use them effectively.</p>
+                        </div>
+                        <div class="tip-card">
+                            <h4><i class="fas fa-chart-bar"></i> Measure and Monitor</h4>
+                            <p>Establish clear baselines and track your progress. Regular measurement helps optimize your analytics investments over time.</p>
+                        </div>
+                        <div class="tip-card">
+                            <h4><i class="fas fa-rocket"></i> Scale Successful Initiatives</h4>
+                            <p>Once you prove ROI in one area, expand successful analytics use cases to other departments and processes.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="../assets/Logosep.png" alt="Leo Consult Logo">
+                        <span>Leo Consult</span>
+                    </div>
+                    <p class="footer-description">
+                        Transforming businesses through data-driven insights and strategic consulting.
+                    </p>
+                    <div class="footer-social">
+                        <a href="https://linkedin.com/company/leo-consult-group" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/wilkinjones/" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/profile.php?id=61578708794818" target="_blank"><i class="fab fa-facebook"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="../services/data-analytics.html">Data Analytics</a></li>
+                        <li><a href="../services/business-consulting.html">Business Consulting</a></li>
+                        <li><a href="../services/implementation.html">Implementation Support</a></li>
+                        <li><a href="../index.html#contact">Free Consultation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="../blog/index.html">Blog</a></li>
+                        <li><a href="../index.html#case-studies">Case Studies</a></li>
+                        <li><a href="../tools/roi-calculator.html">ROI Calculator</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="../index.html#about">About Us</a></li>
+                        <li><a href="../index.html#contact">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-legal">
+                    <p>&copy; 2025 Leo Consult. All rights reserved.</p>
+                    <div class="legal-links">
+                        <a href="../legal/privacy.html">Privacy Policy</a>
+                        <a href="../legal/terms.html">Terms of Service</a>
+                        <a href="../legal/cookies.html">Cookie Policy</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function calculateROI() {
+            // Get input values
+            const softwareCost = parseFloat(document.getElementById('software-cost').value) || 0;
+            const implementationCost = parseFloat(document.getElementById('implementation-cost').value) || 0;
+            const trainingCost = parseFloat(document.getElementById('training-cost').value) || 0;
+            const maintenanceCost = parseFloat(document.getElementById('maintenance-cost').value) || 0;
+            
+            const revenueIncrease = parseFloat(document.getElementById('revenue-increase').value) || 0;
+            const costSavings = parseFloat(document.getElementById('cost-savings').value) || 0;
+            const efficiencyGains = parseFloat(document.getElementById('efficiency-gains').value) || 0;
+            const currentRevenue = parseFloat(document.getElementById('current-revenue').value) || 0;
+
+            // Calculate total investment
+            const initialInvestment = softwareCost + implementationCost + trainingCost;
+            const totalFirstYearCost = initialInvestment + maintenanceCost;
+
+            // Calculate efficiency-based benefits
+            const efficiencyBenefit = (currentRevenue * efficiencyGains) / 100;
+
+            // Calculate total annual benefits
+            const totalAnnualBenefits = revenueIncrease + costSavings + efficiencyBenefit;
+
+            // Calculate ROI
+            const netAnnualBenefit = totalAnnualBenefits - maintenanceCost;
+            const roiPercentage = ((netAnnualBenefit / initialInvestment) * 100);
+            
+            // Calculate payback period in months
+            const paybackPeriod = initialInvestment / (totalAnnualBenefits / 12);
+            
+            // Calculate 3-year net benefit
+            const threeYearBenefits = (totalAnnualBenefits * 3) - (maintenanceCost * 2) - initialInvestment;
+
+            // Update results
+            document.getElementById('roi-percentage').textContent = roiPercentage.toFixed(1) + '%';
+            document.getElementById('net-benefit').textContent = '$' + netAnnualBenefit.toLocaleString();
+            document.getElementById('payback-period').textContent = paybackPeriod.toFixed(1) + ' months';
+            document.getElementById('three-year-roi').textContent = '$' + threeYearBenefits.toLocaleString();
+
+            // Show results
+            document.getElementById('results-container').classList.add('show');
+            
+            // Scroll to results
+            document.getElementById('results-container').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'center'
+            });
+
+            // Track analytics event
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'roi_calculation', {
+                    'investment_amount': initialInvestment,
+                    'expected_roi': roiPercentage.toFixed(1),
+                    'payback_months': paybackPeriod.toFixed(1)
+                });
+            }
+        }
+
+        // Add some interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add input event listeners for real-time updates
+            const inputs = document.querySelectorAll('input[type="number"]');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    // Add visual feedback
+                    this.style.borderColor = this.value ? '#28a745' : '#e0e0e0';
+                });
+            });
+
+            // Mobile menu functionality
+            const navToggle = document.getElementById('nav-toggle');
+            const navMenu = document.querySelector('.nav-menu');
+            
+            if (navToggle) {
+                navToggle.addEventListener('click', function() {
+                    navMenu.classList.toggle('active');
+                    navToggle.classList.toggle('active');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

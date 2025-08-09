@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Form - Leo Consult</title>
+</head>
+<body>
+    <h1>Simple Test Form</h1>
+    
+    <h2>Contact Form Test</h2>
+    <form action="https://formspree.io/f/xblkqjlp" method="POST">
+        <label>First Name: <input type="text" name="firstName" required></label><br><br>
+        <label>Last Name: <input type="text" name="lastName" required></label><br><br>
+        <label>Email: <input type="email" name="email" required></label><br><br>
+        <label>Company: <input type="text" name="company" required></label><br><br>
+        <label>Message: <textarea name="message" required></textarea></label><br><br>
+        <button type="submit">Test Contact Form</button>
+    </form>
+
+    <hr>
+
+    <h2>Audit Form Test</h2>
+    <form action="https://formspree.io/f/mnnzlqnl" method="POST">
+        <label>Name: <input type="text" name="name" required></label><br><br>
+        <label>Email: <input type="email" name="email" required></label><br><br>
+        <label>Company: <input type="text" name="company" required></label><br><br>
+        <label>Company Size: 
+            <select name="company-size" required>
+                <option value="">Select Size</option>
+                <option value="1-10">1-10 employees</option>
+                <option value="11-50">11-50 employees</option>
+            </select>
+        </label><br><br>
+        <button type="submit">Test Audit Form</button>
+    </form>
+
+    <script>
+        // Add some debugging
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                console.log('Form submitted:', this.action);
+                console.log('Form data:', new FormData(this));
+            });
+        });
+    </script>
+</body>
+</html>
