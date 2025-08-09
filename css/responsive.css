@@ -100,10 +100,36 @@
     
     /* Hero Section */
     .hero {
-        min-height: 100vh;
-        padding: 4rem 0 2rem;
+        min-height: 90vh;
+        padding: 2rem 0 1rem;
     }
     
+    /* Hero Icons - Mobile Size */
+    .hero-icon, .service-hero .hero-icon {
+        width: 250px;
+        height: 250px;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-icon i, .service-hero .hero-icon i {
+        font-size: 80px;
+    }
+
+    .hero h1, .service-hero h1 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .hero .lead, .service-hero .lead {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        padding: 0 1rem;
+    }
+
+    .service-hero {
+        padding: 4rem 0 2rem;
+    }
     .hero-content {
         gap: 2rem;
     }
@@ -392,7 +418,7 @@
 /* Landscape Mobile */
 @media screen and (max-height: 500px) and (orientation: landscape) {
     .hero {
-        min-height: 100vh;
+        min-height: 90vh;
         padding: 1rem 0;
     }
     
@@ -436,7 +462,7 @@
     
     .hero {
         min-height: auto;
-        padding: 4rem 0 2rem;
+        padding: 2rem 0 1rem;
     }
     
     body {
