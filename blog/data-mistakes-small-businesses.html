@@ -173,6 +173,60 @@
                 color: #d1d5db;
             }
         }
+            
+        .article-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .article-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+        
+        .article-header .container {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .article-title {
+            color: white !important;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            color: white;
+        }
+        
+        .breadcrumb span {
+            color: rgba(255, 255, 255, 0.6);
+            margin: 0 0.5rem;
+        }
+        
+        .article-meta .meta-item {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .article-meta .meta-item i {
+            color: rgba(255, 255, 255, 0.7);
+        }
     </style>
 </head>
 <body>
@@ -520,4 +574,5 @@
     <script src="../js/analytics.js"></script>
 </body>
 </html>
+
 
