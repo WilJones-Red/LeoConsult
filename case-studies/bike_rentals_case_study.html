@@ -669,8 +669,102 @@
     <script src="../js/main.js"></script>
     <script src="../js/forms.js"></script>
     <script src="../js/analytics.js"></script>
+    
+    <!-- Counter Animation Script -->
+    <script>
+    (() => {
+      const ease = p => (p < 0.5 ? 2*p*p : 1 - Math.pow(-2*p + 2, 2) / 2);
+
+      function parseParts(text) {
+        const s = text.trim();
+        // Match optional sign, grouped or plain int, optional decimal
+        const numMatch = s.match(/[+\-]?(?:\d{1,3}(?:[,\s]\d{3})+|\d+)(?:\.\d+)?/);
+        if (!numMatch) return null;
+
+        const i = numMatch.index;
+        const numStr = numMatch[0];
+        const prefix = s.slice(0, i);
+        const suffix = s.slice(i + numStr.length);
+
+        const hasGrouping = /[,\s]/.test(numStr);
+        const normalized = numStr.replace(/[,\s]/g, '');
+        const decimals = (normalized.split('.')[1] || '').length;
+        const target = Number(normalized);
+
+        return { prefix, suffix, target, decimals, hasGrouping };
+      }
+
+      function formatNumber(value, decimals, useGrouping) {
+        return new Intl.NumberFormat('en-US', {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals,
+          useGrouping
+        }).format(value);
+      }
+
+      function animateValue(el) {
+        if (el.classList.contains('animated')) return; // Prevent re-animation
+        
+        const parts = parseParts(el.textContent);
+        if (!parts) return;
+
+        const { prefix, suffix, target, decimals, hasGrouping } = parts;
+        const duration = +(el.dataset.duration || 1500);
+        const start = +(el.dataset.start || 0);
+        const t0 = performance.now();
+
+        // Mark as animated
+        el.classList.add('animated');
+
+        // Start from initial value
+        el.textContent = `${prefix}${formatNumber(start, decimals, hasGrouping)}${suffix}`;
+
+        function frame(now) {
+          const t = Math.min((now - t0) / duration, 1);
+          const cur = start + (target - start) * ease(t);
+          el.textContent = `${prefix}${formatNumber(cur, decimals, hasGrouping)}${suffix}`;
+          if (t < 1) requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+      }
+
+      // Function to check if element is in viewport
+      function isInViewport(element) {
+        const rect = element.getBoundingClientRect();
+        return (
+          rect.top >= 0 &&
+          rect.left >= 0 &&
+          rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+          rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+      }
+
+      // Initialize animation when metrics come into view
+      function initCounterAnimation() {
+        const counters = document.querySelectorAll('.metrics-grid .metric-value');
+        
+        counters.forEach(counter => {
+          if (isInViewport(counter) && !counter.classList.contains('animated')) {
+            animateValue(counter);
+          }
+        });
+      }
+
+      // Run on load and scroll
+      document.addEventListener('DOMContentLoaded', initCounterAnimation);
+      window.addEventListener('scroll', initCounterAnimation);
+      
+      // Also run immediately in case content is already visible
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCounterAnimation);
+      } else {
+        initCounterAnimation();
+      }
+    })();
+    </script>
 </body>
 </html>
+
 
 
 
