@@ -8,6 +8,138 @@
     box-sizing: border-box;
 }
 
+/* =========================
+   Email Subscription Modal
+=========================== */
+
+.subscribe-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+}
+.subscribe-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.modal-submit {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+.modal-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+.modal-content {
+        background-color: #fff;
+        color: #222;
+        margin: 8% auto;
+        padding: 2rem 2.5rem;
+        border: 1px solid #888;
+        width: 90%;
+        max-width: 400px;
+        border-radius: 8px;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+        position: relative;
+        text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+    .modal-content {
+        background-color: #181a1b;
+        color: #f1f1f1;
+        border: 1px solid #333;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.7);
+    }
+    .modal-submit, .subscribe-btn {
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
+    }
+    #emailForm input[type="email"] {
+        background: #23272a;
+        color: #f1f1f1;
+        border: 1px solid #444;
+    }
+    .close {
+        color: #aaa;
+    }
+    .close:hover {
+        color: #fff;
+    }
+}
+}
+.close {
+    color: #aaa;
+    position: absolute;
+    top: 12px;
+    right: 18px;
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+.close:hover {
+    color: #333;
+}
+#emailForm input[type="email"],
+#emailForm input[type="text"] {
+    width: 80%;
+    padding: 0.6rem;
+    margin: 1rem 0 1.5rem 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    background: #fff;
+    color: #222;
+}
+
+@media (prefers-color-scheme: dark) {
+    #emailForm input[type="email"],
+    #emailForm input[type="text"] {
+        background: #23272a;
+        color: #f1f1f1;
+        border: 1px solid #444;
+    }
+}
+#modalMessage {
+    margin-top: 1rem;
+    color: #1a73e8;
+    font-weight: 500;
+}
+
 html {
     scroll-behavior: smooth;
     font-size: 16px;

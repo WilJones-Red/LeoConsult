@@ -68,9 +68,23 @@
                     Stay ahead with the latest trends in data analytics, business strategy, and digital transformation. 
                     Our expert insights help you navigate the evolving landscape of data-driven business.
                 </p>
+                <button id="subscribeBtn" class="subscribe-btn">Subscribe for Weekly Updates</button>
             </div>
         </div>
     </section>
+
+    <!-- Email Subscription Modal -->
+    <div id="emailModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h2>Subscribe to Weekly Blog Updates</h2>
+            <form id="emailForm">
+                <input type="email" id="subscriberEmail" name="email" placeholder="Enter your email" required>
+                <button type="submit" class="modal-submit">Subscribe</button>
+            </form>
+            <div id="modalMessage" style="display:none;"></div>
+        </div>
+    </div>
 
     <!-- Blog Content -->
     <section class="blog-content">

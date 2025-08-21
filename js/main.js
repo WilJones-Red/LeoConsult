@@ -2,6 +2,22 @@
 // MAIN JAVASCRIPT FILE
 // ========================================
 
+// Supabase client setup
+const SUPABASE_URL = 'https://clpcskkoguomoihnisai.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNscGNza2tvZ3VvbW9paG5pc2FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUyMjYyMTIsImV4cCI6MjA3MDgwMjIxMn0.TpZQuKm0cVvl7lJbXt2Iw1_s3HlLLIIbRr7lIOyVsBo';
+let supabase;
+if (window.supabase) {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+} else {
+    // Dynamically load supabase-js if not present
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js';
+    script.onload = () => {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    };
+    document.head.appendChild(script);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     
     // ========================================
@@ -35,6 +51,85 @@ document.addEventListener('DOMContentLoaded', function() {
             navbar.classList.remove('scrolled');
         }
     });
+
+    // ========================================
+    // EMAIL SUBSCRIPTION MODAL FUNCTIONALITY
+    // ========================================
+    const subscribeBtn = document.getElementById('subscribeBtn');
+    const emailModal = document.getElementById('emailModal');
+    const closeModal = document.getElementById('closeModal');
+    const emailForm = document.getElementById('emailForm');
+    const modalMessage = document.getElementById('modalMessage');
+
+    if (subscribeBtn && emailModal && closeModal && emailForm) {
+        subscribeBtn.addEventListener('click', function() {
+            emailModal.style.display = 'block';
+        });
+        closeModal.addEventListener('click', function() {
+            emailModal.style.display = 'none';
+            modalMessage.style.display = 'none';
+            emailForm.style.display = 'block';
+        });
+        window.addEventListener('click', function(event) {
+            if (event.target === emailModal) {
+                emailModal.style.display = 'none';
+                modalMessage.style.display = 'none';
+                emailForm.style.display = 'block';
+            }
+        });
+        emailForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const firstName = document.getElementById('subscriberFirstName').value;
+            const lastName = document.getElementById('subscriberLastName').value;
+            const email = document.getElementById('subscriberEmail').value;
+            if (!supabase) {
+                modalMessage.textContent = 'Loading... please try again in a moment.';
+                modalMessage.style.display = 'block';
+                return;
+            }
+            const { error } = await supabase
+                .from('newsletter_subscribers')
+                .insert([{ first_name: firstName, last_name: lastName, email }]);
+            if (error) {
+                modalMessage.textContent = 'There was an error subscribing. Please try again.';
+                modalMessage.style.display = 'block';
+            } else {
+                emailForm.style.display = 'none';
+                modalMessage.textContent = 'Thank you for subscribing! You will receive weekly updates.';
+                modalMessage.style.display = 'block';
+            }
+        });
+
+        // --- Auto-open modal after 20 seconds (if not already opened/closed) ---
+        let modalOpened = false;
+        function openModalAuto() {
+            if (!modalOpened && emailModal.style.display !== 'block') {
+                emailModal.style.display = 'block';
+                modalOpened = true;
+            }
+        }
+        setTimeout(openModalAuto, 20000); // 20 seconds
+
+        // --- Auto-open modal when user scrolls past 50% of the page ---
+        function checkScrollModal() {
+            if (modalOpened) return;
+            const scrollY = window.scrollY || window.pageYOffset;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            if (docHeight > 0 && scrollY / docHeight > 0.5) {
+                openModalAuto();
+                window.removeEventListener('scroll', checkScrollModal);
+            }
+        }
+        window.addEventListener('scroll', checkScrollModal);
+
+        // Mark as opened if user closes or submits
+        emailModal.addEventListener('click', function(e) {
+            if (e.target === closeModal) modalOpened = true;
+        });
+        emailForm.addEventListener('submit', function() {
+            modalOpened = true;
+        });
+    }
     
     // ========================================
     // SMOOTH SCROLLING

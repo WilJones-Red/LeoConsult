@@ -33,6 +33,7 @@
     </script>
 </head>
 <body>
+
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
@@ -357,6 +358,24 @@
             </div>
         </div>
     </article>
+
+    <!-- Email Subscription Modal and Button (moved to end of blog post) -->
+    <div class="subscribe-section" style="text-align:center; margin: 2.5rem 0;">
+        <button id="subscribeBtn" class="subscribe-btn">Subscribe for Weekly Updates</button>
+    </div>
+    <div id="emailModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h2>Subscribe to Weekly Blog Updates</h2>
+            <form id="emailForm">
+                <input type="text" id="subscriberFirstName" name="firstName" placeholder="First Name" required style="margin-bottom:0.7rem;">
+                <input type="text" id="subscriberLastName" name="lastName" placeholder="Last Name" required style="margin-bottom:0.7rem;">
+                <input type="email" id="subscriberEmail" name="email" placeholder="Enter your email" required>
+                <button type="submit" class="modal-submit">Subscribe</button>
+            </form>
+            <div id="modalMessage" style="display:none;"></div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
