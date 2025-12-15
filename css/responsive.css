@@ -54,7 +54,7 @@
         left: -100%;
         width: 100%;
         height: calc(100vh - 80px);
-        background: rgba(255, 255, 255, 0.98);
+        background: #ffffff;
         backdrop-filter: blur(10px);
         flex-direction: column;
         justify-content: flex-start;
@@ -601,5 +601,21 @@
     textarea:focus:not(:focus-visible),
     a:focus:not(:focus-visible) {
         outline: none;
+    }
+}
+
+/* Dark mode mobile menu */
+@media screen and (max-width: 768px) and (prefers-color-scheme: dark) {
+    .nav-menu {
+        background: #181a1b !important;
+        border-top: 1px solid #333 !important;
+    }
+    
+    .nav-link {
+        color: #e0e0e0 !important;
+    }
+    
+    .nav-link:hover {
+        color: #667eea !important;
     }
 }

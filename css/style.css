@@ -502,6 +502,24 @@ a {
     transition: 0.3s;
 }
 
+/* Dark mode navigation - mobile menu */
+@media (prefers-color-scheme: dark) {
+    @media screen and (max-width: 768px) {
+        .nav-menu {
+            background: #181a1b !important;
+            border-top: 1px solid #333 !important;
+        }
+        
+        .nav-link {
+            color: #e0e0e0 !important;
+        }
+        
+        .nav-link:hover {
+            color: #667eea !important;
+        }
+    }
+}
+
 /* ========================================
    HERO SECTION
 ======================================== */
@@ -1879,15 +1897,16 @@ a {
     align-items: center;
     text-align: center;
     padding: 2rem 1rem;
-    background: white;
+    background: var(--card-bg);
     border-radius: 12px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
 }
 
 .visual-icon:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
 }
 
 .visual-icon i {
@@ -1898,7 +1917,7 @@ a {
 
 .visual-icon span {
     font-weight: 600;
-    color: #333;
+    color: var(--text-color);
     font-size: 0.9rem;
 }
 
