@@ -1,0 +1,31 @@
+text,intent
+What do you do?,services
+List your services,services
+Do you do implementation?,implementation
+Can you help deploy dashboards?,implementation
+How do I get started?,onboarding
+Book a meeting,onboarding
+How can I contact you?,contact
+What's your email?,contact
+How much does a project cost?,pricing
+Do you have fixed prices?,pricing
+Can I get a quote?,quote
+Do you offer a free audit?,data_audit
+Do you offer refunds?,refunds
+Payment terms?,payment
+Can you guarantee results?,guarantee
+What happens if I need revisions?,revisions
+What does scope of work include?,scope
+When are you available?,hours
+What time zone are you in?,timezone
+Do you work internationally?,coverage
+Do you support Spanish?,language
+I want to talk to a human,escalation
+Can you give legal advice?,legal
+What's your partnership policy?,partnerships
+Can you give me a custom price right now?,custom_pricing
+Do you store PII?,privacy
+Can you sign an NDA?,nda
+How do you protect my data?,privacy
+Do you do monthly maintenance?,maintenance
+Can you keep improving the model after launch?,maintenance
