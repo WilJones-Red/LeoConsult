@@ -37,9 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             // Form will now submit naturally to Formspree
-                // window.location.href = '/thank-you.html';
-                
-            }, 2000);
+            // window.location.href = '/thank-you.html';
         });
     }
     
