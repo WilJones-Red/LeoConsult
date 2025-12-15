@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNscGNza2tvZ3VvbW9paG5pc2FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUyMjYyMTIsImV4cCI6MjA3MDgwMjIxMn0.vTKzS5TCN8KiHXSRXN2-sBJy0CdOHlLbAR84q9pqRvI',
                     'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNscGNza2tvZ3VvbW9paG5pc2FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUyMjYyMTIsImV4cCI6MjA3MDgwMjIxMn0.vTKzS5TCN8KiHXSRXN2-sBJy0CdOHlLbAR84q9pqRvI'
                 },
                 body: JSON.stringify({ query: userMsg })
@@ -75,7 +76,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const response = data.answer || "I'm sorry, I couldn't understand that.";
             const botMessageDiv = document.createElement('div');
             botMessageDiv.className = 'chatbot-msg bot';
-            botMessageDiv.textContent = response;
+            
+            // Convert URLs to clickable links if not already HTML
+            const linkifiedResponse = response.replace(
+                /<a\s+(?:[^>]*?\s+)?href="([^"]*)"(?:[^>]*)>(.*?)<\/a>/gi,
+                '<a href="$1" target="_blank" rel="noopener noreferrer">$2</a>'
+            );
+            
+            botMessageDiv.innerHTML = linkifiedResponse;
             messages.appendChild(botMessageDiv);
             messages.scrollTop = messages.scrollHeight;
         } catch (error) {
