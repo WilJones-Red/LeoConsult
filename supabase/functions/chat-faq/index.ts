@@ -66,26 +66,38 @@ serve(async (req) => {
       throw error
     }
 
-    // Return the best match or fallback message
+    // Prepare response data
+    let responseData
     if (data && data.length > 0) {
-      return new Response(
-        JSON.stringify({
-          answer: data[0].answer,
-          similarity_score: 1 - data[0].similarity,  // Convert distance to similarity
-          predicted_intent: data[0].intent
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+      responseData = {
+        answer: data[0].answer,
+        similarity_score: 1 - data[0].similarity,
+        predicted_intent: data[0].intent,
+        matched_question: data[0].question
+      }
     } else {
-      return new Response(
-        JSON.stringify({
-          answer: 'I am not sure about that. Could you rephrase your question? I can help with: services, pricing, getting started, data analytics, and consulting.',
-          similarity_score: 0.0,
-          predicted_intent: 'unknown'
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+      responseData = {
+        answer: 'I am not sure about that. Could you rephrase your question? I can help with: services, pricing, getting started, data analytics, and consulting.',
+        similarity_score: 0.0,
+        predicted_intent: 'unknown',
+        matched_question: null
+      }
     }
+
+    // Log the interaction
+    await supabase.from('chat_logs').insert({
+      user_query: query,
+      matched_question: responseData.matched_question,
+      bot_response: responseData.answer,
+      confidence_score: responseData.similarity_score,
+      predicted_intent: responseData.predicted_intent
+    })
+
+    // Return response
+    return new Response(
+      JSON.stringify(responseData),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
 
   } catch (error) {
     console.error('Error:', error)
