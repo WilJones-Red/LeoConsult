@@ -23,6 +23,14 @@ document.addEventListener('DOMContentLoaded', function() {
     chatBubble.onclick = function() {
         chatWidget.style.display = 'block';
         chatBubble.style.display = 'none';
+        // Show intro message if not already present
+        const messages = chatWidget.querySelector('#chatbot-messages');
+        if (!messages.querySelector('.chatbot-msg.bot.intro')) {
+            const introDiv = document.createElement('div');
+            introDiv.className = 'chatbot-msg bot intro';
+            introDiv.textContent = 'Hello! I am Leo AI assistant. How can I help you today?';
+            messages.appendChild(introDiv);
+        }
     };
     // Hide chat and show bubble on close
     const closeBtn = chatWidget.querySelector('#chatbot-close');
