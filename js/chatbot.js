@@ -45,16 +45,15 @@ document.addEventListener('DOMContentLoaded', function() {
         messages.appendChild(userMessageDiv);
         input.value = '';
         messages.scrollTop = messages.scrollHeight;
-        // Send to backend
+        // Send to AI Edge Function
         try {
-            const res = await fetch('https://clpcskkoguomoihnisai.supabase.co/rest/v1/rpc/match_faq', {
+            const res = await fetch('https://clpcskkoguomoihnisai.supabase.co/functions/v1/chat-faq', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNscGNza2tvZ3VvbW9paG5pc2FpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NTIyNjIxMiwiZXhwIjoyMDcwODAyMjEyfQ.XuwIPzfFdebMIQMn9QGsshkkvKX4yBQzlDG6-KH81K8',
-                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNscGNza2tvZ3VvbW9paG5pc2FpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NTIyNjIxMiwiZXhwIjoyMDcwODAyMjEyfQ.XuwIPzfFdebMIQMn9QGsshkkvKX4yBQzlDG6-KH81K8'
+                    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNscGNza2tvZ3VvbW9paG5pc2FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUyMjYyMTIsImV4cCI6MjA3MDgwMjIxMn0.vTKzS5TCN8KiHXSRXN2-sBJy0CdOHlLbAR84q9pqRvI'
                 },
-                body: JSON.stringify({ "user_query": userMsg })
+                body: JSON.stringify({ query: userMsg })
             });
             
             if (!res.ok) {
@@ -62,10 +61,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             const data = await res.json();
-            console.log('Response data:', data); // Debug log
+            console.log('AI Response:', data); // Debug log
             
-            // Get first result from the array
-            const response = data[0]?.answer || "I'm sorry, I couldn't understand that.";
+            // Extract answer from AI response
+            const response = data.answer || "I'm sorry, I couldn't understand that.";
             const botMessageDiv = document.createElement('div');
             botMessageDiv.className = 'chatbot-msg bot';
             botMessageDiv.textContent = response;
