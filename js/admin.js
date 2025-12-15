@@ -1,7 +1,7 @@
 // Admin Panel JavaScript for Leo Chatbot
 
 const SUPABASE_URL = 'https://clpcskkoguomoihnisai.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNscGNza2tvZ3VvbW9paG5pc2FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUyMjYyMTIsImV4cCI6MjA3MDgwMjIxMn0.vTKzS5TCN8KiHXSRXN2-sBJy0CdOHlLbAR84q9pqRvI';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNscGNza2tvZ3VvbW9paG5pc2FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUyMjYyMTIsImV4cCI6MjA3MDgwMjIxMn0.TpZQuKm0cVvl7lJbXt2Iw1_s3HlLLIIbRr7lIOyVsBo';
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let currentEditId = null;
@@ -37,10 +37,20 @@ function showAdminPanel() {
 }
 
 // Check if user is already logged in
+supabase.auth.getSession().then(({ data: { session } }) => {
+    if (session) {
+        showAdminPanel();
+        loadAllData();
+    }
+});
+
 supabase.auth.onAuthStateChange((event, session) => {
     if (session) {
         showAdminPanel();
         loadAllData();
+    } else {
+        document.getElementById('auth-container').style.display = 'block';
+        document.getElementById('admin-container').style.display = 'none';
     }
 });
 
