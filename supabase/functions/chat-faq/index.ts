@@ -7,6 +7,7 @@ import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.6.
 const corsHeaders = {
   'Access-Control-Allow-Origin': 'https://www.leoconsult.org',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
 serve(async (req) => {
