@@ -34,7 +34,7 @@ body {
 
 /* Header Styling */
 #title-block-header {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    background: #1E40AF;
     color: white;
     padding: 4rem 2rem;
     margin-bottom: 3rem;
@@ -124,7 +124,7 @@ h2.anchored::before {
     top: 0;
     bottom: 0;
     width: 4px;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: #1E40AF;
     border-radius: 2px;
 }
 
@@ -236,7 +236,7 @@ strong {
 
 /* Key metrics or results styling */
 .results-highlight {
-    background: linear-gradient(135deg, var(--bg-light) 0%, #ffffff 100%);
+    background: #F8F9FA;
     border-left: 4px solid var(--primary-color);
     padding: 1.5rem;
     margin: 2rem 0;
@@ -339,7 +339,7 @@ strong {
 }
 
 .metric-card {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    background: #1E40AF;
     color: white;
     padding: 1.5rem;
     border-radius: var(--border-radius);

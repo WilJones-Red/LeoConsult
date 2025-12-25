@@ -8,138 +8,6 @@
     box-sizing: border-box;
 }
 
-/* =========================
-   Email Subscription Modal
-=========================== */
-
-.subscribe-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #fff;
-    border: none;
-    padding: 0.75rem 2rem;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 1.5rem;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-    transition: all 0.3s ease;
-}
-.subscribe-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-}
-
-.modal-submit {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #fff;
-    border: none;
-    padding: 0.75rem 2rem;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-    transition: all 0.3s ease;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-}
-.modal-submit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-}
-
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.5);
-}
-.modal-content {
-        background-color: #fff;
-        color: #222;
-        margin: 8% auto;
-        padding: 2rem 2.5rem;
-        border: 1px solid #888;
-        width: 90%;
-        max-width: 400px;
-        border-radius: 8px;
-        box-shadow: 0 2px 16px rgba(0,0,0,0.2);
-        position: relative;
-        text-align: center;
-}
-
-@media (prefers-color-scheme: dark) {
-    .modal-content {
-        background-color: #181a1b;
-        color: #f1f1f1;
-        border: 1px solid #333;
-        box-shadow: 0 2px 16px rgba(0,0,0,0.7);
-    }
-    .modal-submit, .subscribe-btn {
-        color: #fff;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
-    }
-    #emailForm input[type="email"] {
-        background: #23272a;
-        color: #f1f1f1;
-        border: 1px solid #444;
-    }
-    .close {
-        color: #aaa;
-    }
-    .close:hover {
-        color: #fff;
-    }
-}
-}
-.close {
-    color: #aaa;
-    position: absolute;
-    top: 12px;
-    right: 18px;
-    font-size: 2rem;
-    font-weight: bold;
-    cursor: pointer;
-}
-.close:hover {
-    color: #333;
-}
-#emailForm input[type="email"],
-#emailForm input[type="text"] {
-    width: 80%;
-    padding: 0.6rem;
-    margin: 1rem 0 1.5rem 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    background: #fff;
-    color: #222;
-}
-
-@media (prefers-color-scheme: dark) {
-    #emailForm input[type="email"],
-    #emailForm input[type="text"] {
-        background: #23272a;
-        color: #f1f1f1;
-        border: 1px solid #444;
-    }
-}
-#modalMessage {
-    margin-top: 1rem;
-    color: #1a73e8;
-    font-weight: 500;
-}
-
 html {
     scroll-behavior: smooth;
     font-size: 16px;
@@ -214,7 +82,7 @@ a {
     align-items: center;
     justify-content: center;
     padding: 2rem 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1E40AF;
 }
 
 .thank-you-content {
@@ -340,7 +208,7 @@ a {
 }
 
 .highlight {
-    background: linear-gradient(120deg, #667eea 0%, #764ba2 100%);
+    background: #1E40AF;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -364,9 +232,9 @@ a {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1E40AF;
     color: white;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
 }
 
 .btn-primary:hover {
@@ -476,7 +344,7 @@ a {
 }
 
 .nav-link.cta-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1E40AF;
     color: white;
     padding: 0.75rem 1.5rem;
     border-radius: 25px;
@@ -525,12 +393,14 @@ a {
 ======================================== */
 
 .hero {
-    min-height: 100vh;
+    min-height: 110vh;
     display: flex;
     align-items: center;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: radial-gradient(ellipse at center, #F0F4FF 0%, #E8EDFF 100%);
     position: relative;
     overflow: hidden;
+    padding-top: 120px;
+    padding-bottom: 80px;
 }
 
 .hero::before {
@@ -540,9 +410,8 @@ a {
     right: 0;
     width: 50%;
     height: 100%;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23667eea" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,117.3C1248,117,1344,139,1392,149.3L1440,160L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path></svg>') no-repeat;
-    background-size: cover;
-    opacity: 0.5;
+    background: transparent;
+    opacity: 0;
 }
 
 .hero-container {
@@ -620,8 +489,8 @@ a {
     width: 400px;
     height: 400px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+    background: #1E40AF;
+    box-shadow: 0 20px 60px rgba(30, 64, 175, 0.3);
     animation: pulse 2s ease-in-out infinite alternate;
 }
 
@@ -774,7 +643,7 @@ a {
     left: 0;
     width: 100%;
     height: 4px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1E40AF;
     transform: scaleX(0);
     transition: transform 0.3s ease;
 }
@@ -789,8 +658,8 @@ a {
 }
 
 .service-card.featured {
-    border: 2px solid #667eea;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: 2px solid #1E40AF;
+    background: #1E40AF;
     color: white;
     transform: scale(1.05);
 }
@@ -809,7 +678,7 @@ a {
 .service-icon {
     width: 60px;
     height: 60px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1E40AF;
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -932,7 +801,7 @@ a {
 .point-icon {
     width: 50px;
     height: 50px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1E40AF;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -967,7 +836,7 @@ a {
 
 .lead-magnet {
     padding: 6rem 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1E40AF;
     color: white;
 }
 
@@ -1102,7 +971,7 @@ a {
 
 .case-category {
     display: inline-block;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1E40AF;
     color: white;
     padding: 0.3rem 0.8rem;
     border-radius: 20px;
@@ -1402,7 +1271,7 @@ a {
 }
 
 .blog-category {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1E40AF;
     color: white;
     padding: 0.3rem 0.8rem;
     border-radius: 20px;
@@ -1490,7 +1359,7 @@ a {
 .method-icon {
     width: 50px;
     height: 50px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1E40AF;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1778,7 +1647,7 @@ a {
 
 .service-hero {
     padding: 8rem 0 4rem;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: #E0E7FF;
     position: relative;
 }
 
@@ -1825,7 +1694,7 @@ a {
 .benefit-icon {
     width: 50px;
     height: 50px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1E40AF;
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -1860,7 +1729,7 @@ a {
 .visual-icon {
     text-align: center;
     padding: 2rem 1rem;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    background: #F1F5F9;
     border-radius: 12px;
     transition: all 0.3s ease;
 }
@@ -1947,8 +1816,8 @@ a {
 }
 
 .category-card.featured {
-    border: 2px solid #667eea;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: 2px solid #1E40AF;
+    background: #1E40AF;
     color: white;
 }
 
@@ -1966,7 +1835,7 @@ a {
 .category-icon {
     width: 60px;
     height: 60px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1E40AF;
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -2043,7 +1912,7 @@ a {
 .step-number {
     width: 60px;
     height: 60px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1E40AF;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -2135,7 +2004,7 @@ a {
 
 .service-cta {
     padding: 6rem 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1E40AF;
     color: white;
     text-align: center;
 }
@@ -2242,7 +2111,7 @@ a:focus {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1E40AF;
     opacity: 0;
     transition: opacity 0.3s ease;
     z-index: 1;
@@ -2266,7 +2135,7 @@ a:focus {
 }
 
 .competitive-comparison th {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1E40AF;
     color: white;
     padding: 1rem;
     text-align: left;
@@ -2396,7 +2265,7 @@ a:focus {
 
     /* Hero Section */
     .hero {
-        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+        background: #334155;
     }
 
     .hero-title {
@@ -2598,7 +2467,7 @@ a:focus {
 
     /* Service Hero */
     .service-hero {
-        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+        background: #334155;
     }
 
     /* Loading States */
@@ -2672,7 +2541,7 @@ a:focus {
 
     /* Blog Post Header Dark Mode Override */
     .blog-post-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        background: #1E40AF !important;
     }
 
     /* Post CTA Dark Mode */
@@ -2723,7 +2592,7 @@ a:focus {
 
     /* Post CTA Dark Mode */
     .post-cta {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #1E40AF;
     }
 
     .post-cta h3,
@@ -2738,7 +2607,7 @@ a:focus {
 
 /* Blog Post Header */
 .blog-post-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1E40AF;
     color: white;
     padding: 2rem 0 4rem;
 }
@@ -2892,7 +2761,7 @@ a:focus {
 }
 
 .post-cta {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #1E40AF;
     color: white;
     padding: 2rem;
     border-radius: 12px;
