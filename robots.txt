@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://www.leoconsult.org/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /chatbot_backend/
+Disallow: /chatbot_env/
+Disallow: /chat/
+
+# Allow important directories
+Allow: /blog/
+Allow: /case-studies/
+Allow: /services/
+Allow: /tools/
+Allow: /assets/
