@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!messages.querySelector('.chatbot-msg.bot.intro')) {
             const introDiv = document.createElement('div');
             introDiv.className = 'chatbot-msg bot intro';
-            introDiv.textContent = 'Hello! I am Leo AI assistant. How can I help you today?';
+            introDiv.innerHTML = 'Hello! I am Leo AI assistant. How can I help you today?<br><small style="opacity: 0.7; font-size: 0.85em;">⚠️ Note: I\'m still learning and being trained. Responses may not always be accurate.</small>';
             messages.appendChild(introDiv);
         }
     };
@@ -89,13 +89,51 @@ document.addEventListener('DOMContentLoaded', function() {
             const botMessageDiv = document.createElement('div');
             botMessageDiv.className = 'chatbot-msg bot';
             
-            // Convert URLs to clickable links if not already HTML
-            const linkifiedResponse = response.replace(
+            // Convert markdown to HTML
+            let processedResponse = response;
+            
+            // Headers (### Header, ## Header, # Header)
+            processedResponse = processedResponse.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+            processedResponse = processedResponse.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+            processedResponse = processedResponse.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+            
+            // Bold: **text** or __text__
+            processedResponse = processedResponse.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+            processedResponse = processedResponse.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+            
+            // Italic: *text* or _text_ (but not already part of bold)
+            processedResponse = processedResponse.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+            processedResponse = processedResponse.replace(/_([^_]+)_/g, '<em>$1</em>');
+            
+            // Links: [text](url)
+            processedResponse = processedResponse.replace(
+                /\[([^\]]+)\]\(([^)]+)\)/g,
+                '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+            );
+            
+            // Code blocks: ```code```
+            processedResponse = processedResponse.replace(/```([^`]+)```/g, '<pre><code>$1</code></pre>');
+            
+            // Inline code: `code`
+            processedResponse = processedResponse.replace(/`([^`]+)`/g, '<code>$1</code>');
+            
+            // Line breaks: \n to <br>
+            processedResponse = processedResponse.replace(/\n/g, '<br>');
+            
+            // Unordered lists: - item or * item
+            processedResponse = processedResponse.replace(/^[\-\*] (.+)$/gim, '<li>$1</li>');
+            processedResponse = processedResponse.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+            
+            // Ordered lists: 1. item
+            processedResponse = processedResponse.replace(/^\d+\. (.+)$/gim, '<li>$1</li>');
+            
+            // Also handle already existing HTML links
+            processedResponse = processedResponse.replace(
                 /<a\s+(?:[^>]*?\s+)?href="([^"]*)"(?:[^>]*)>(.*?)<\/a>/gi,
                 '<a href="$1" target="_blank" rel="noopener noreferrer">$2</a>'
             );
             
-            botMessageDiv.innerHTML = linkifiedResponse;
+            botMessageDiv.innerHTML = processedResponse;
             messages.appendChild(botMessageDiv);
             messages.scrollTop = messages.scrollHeight;
         } catch (error) {
@@ -234,6 +272,30 @@ document.addEventListener('DOMContentLoaded', function() {
 .chatbot-msg.bot { 
     background: #f3f3f7; 
     color: #222; 
+}
+.chatbot-msg.bot a {
+    color: #1E40AF;
+    text-decoration: underline;
+    font-weight: 500;
+}
+.chatbot-msg.bot a:hover {
+    color: #667eea;
+    text-decoration: none;
+}
+.chatbot-msg.bot h1 {
+    font-size: 1.2em;
+    margin: 0.5em 0;
+    font-weight: 600;
+}
+.chatbot-msg.bot h2 {
+    font-size: 1.1em;
+    margin: 0.4em 0;
+    font-weight: 600;
+}
+.chatbot-msg.bot h3 {
+    font-size: 1.05em;
+    margin: 0.3em 0;
+    font-weight: 600;
 }
 .chatbot-msg.bot.error { 
     background: #ffeaea; 
