@@ -87,6 +87,36 @@
         margin-top: calc(2rem + 6 * 3rem);
     }
     
+    /* Dark mode nav fix */
+    @media (prefers-color-scheme: dark) {
+        .nav-menu {
+            background: #181a1b !important;
+            border-bottom: 1px solid #333 !important;
+        }
+        
+        .nav-actions {
+            background: #181a1b !important;
+            border-top: 1px solid #333 !important;
+        }
+        
+        .nav-link {
+            color: #e0e0e0 !important;
+        }
+        
+        .nav-link:hover {
+            color: #667eea !important;
+        }
+        
+        .nav-link.cta-btn {
+            background: #1E40AF !important;
+            color: white !important;
+        }
+        
+        .nav-link.cta-btn:hover {
+            background: #667eea !important;
+        }
+    }
+    
     .nav-menu.active {
         left: 0;
     }
@@ -190,15 +220,14 @@
     /* Hero Section */
     .hero {
         min-height: auto;
-        padding: 6rem 0 6rem;
+        padding: 6rem 0 3rem;
         margin-top: 80px;
         margin-bottom: 0;
     }
     
+    /* Hide animated stats bar on mobile */
     .hero-stats-slider {
-        position: relative;
-        bottom: 0;
-        margin-top: 3rem;
+        display: none;
     }
     
     /* Hero Icons - Mobile Size */
