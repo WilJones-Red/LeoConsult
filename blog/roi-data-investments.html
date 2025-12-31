@@ -18,7 +18,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -37,18 +37,25 @@
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <div class="nav-logo">
-                <a href="../index.html">
-                    <img src="../assets/Logosep.png" alt="Leo Consult Logo" class="logo-img">
-                    <span class="logo-text">Leo Consult</span>
-                </a>
-            </div>
             <div class="nav-menu" id="nav-menu">
+                <div class="nav-logo">
+                    <a href="../index.html">
+                        <img src="../assets/Leo.png" alt="Leo Consult Logo" class="logo-img">
+                        <span class="logo-text">Leo Consult</span>
+                    </a>
+                </div>
                 <a href="../index.html#home" class="nav-link">Home</a>
                 <a href="../index.html#services" class="nav-link">Services</a>
-                <a href="../index.html#about" class="nav-link">About</a>
-                <a href="../index.html#case-studies" class="nav-link">Case Studies</a>
-                <a href="../blog/index.html" class="nav-link active">Blog</a>
+                <div class="nav-dropdown">
+                    <a href="#" class="nav-link dropdown-toggle">Resources <i class="fas fa-chevron-down"></i></a>
+                    <div class="dropdown-menu">
+                        <a href="../index.html#about" class="dropdown-item">About</a>
+                        <a href="../index.html#case-studies" class="dropdown-item">Case Studies</a>
+                        <a href="index.html" class="dropdown-item">Blog</a>
+                    </div>
+                </div>
+            </div>
+            <div class="nav-actions">
                 <a href="../index.html#contact" class="nav-link">Contact</a>
                 <a href="../index.html#contact" class="nav-link cta-btn">Get Free Consultation</a>
             </div>

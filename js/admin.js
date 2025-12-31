@@ -3,7 +3,7 @@
 const SUPABASE_URL = 'https://clpcskkoguomoihnisai.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNscGNza2tvZ3VvbW9paG5pc2FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUyMjYyMTIsImV4cCI6MjA3MDgwMjIxMn0.TpZQuKm0cVvl7lJbXt2Iw1_s3HlLLIIbRr7lIOyVsBo';
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let currentEditId = null;
 
 // Authentication
@@ -11,7 +11,7 @@ async function login() {
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
     
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
         email: email,
         password: password
     });
@@ -26,7 +26,7 @@ async function login() {
 }
 
 async function logout() {
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
     document.getElementById('auth-container').style.display = 'block';
     document.getElementById('admin-container').style.display = 'none';
 }
@@ -37,14 +37,14 @@ function showAdminPanel() {
 }
 
 // Check if user is already logged in
-supabase.auth.getSession().then(({ data: { session } }) => {
+supabaseClient.auth.getSession().then(({ data: { session } }) => {
     if (session) {
         showAdminPanel();
         loadAllData();
     }
 });
 
-supabase.auth.onAuthStateChange((event, session) => {
+supabaseClient.auth.onAuthStateChange((event, session) => {
     if (session) {
         showAdminPanel();
         loadAllData();
@@ -71,8 +71,7 @@ function showTab(tabName) {
 
 // Load Analytics
 async function loadAnalytics() {
-    const { data, error } = await supabase
-        .from('chat_analytics')
+    const { data, error } = await supabaseClient.from('chat_analytics')
         .select('*')
         .single();
     
@@ -87,8 +86,7 @@ async function loadAnalytics() {
 
 // Load FAQs
 async function loadFAQs() {
-    const { data, error } = await supabase
-        .from('faq_chatbot')
+    const { data, error } = await supabaseClient.from('faq_chatbot')
         .select('*')
         .order('id');
     
@@ -117,8 +115,7 @@ async function loadFAQs() {
 
 // Load Chat Logs
 async function loadChatLogs() {
-    const { data, error } = await supabase
-        .from('chat_logs')
+    const { data, error } = await supabaseClient.from('chat_logs')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(50);
@@ -149,8 +146,7 @@ async function loadChatLogs() {
 
 // Load Low Confidence Queries
 async function loadLowConfidence() {
-    const { data, error } = await supabase
-        .from('low_confidence_queries')
+    const { data, error } = await supabaseClient.from('low_confidence_queries')
         .select('*')
         .limit(50);
     
@@ -192,8 +188,7 @@ function showAddFAQ() {
 
 async function editFAQ(id) {
     currentEditId = id;
-    const { data, error } = await supabase
-        .from('faq_chatbot')
+    const { data, error } = await supabaseClient.from('faq_chatbot')
         .select('*')
         .eq('id', id)
         .single();
@@ -223,13 +218,11 @@ async function saveFAQ() {
     
     let error;
     if (currentEditId) {
-        ({ error } = await supabase
-            .from('faq_chatbot')
+        ({ error } = await supabaseClient.from('faq_chatbot')
             .update(faqData)
             .eq('id', currentEditId));
     } else {
-        ({ error } = await supabase
-            .from('faq_chatbot')
+        ({ error } = await supabaseClient.from('faq_chatbot')
             .insert([faqData]));
     }
     
@@ -246,8 +239,7 @@ async function saveFAQ() {
 async function deleteFAQ(id) {
     if (!confirm('Are you sure you want to delete this FAQ?')) return;
     
-    const { error } = await supabase
-        .from('faq_chatbot')
+    const { error } = await supabaseClient.from('faq_chatbot')
         .delete()
         .eq('id', id);
     
@@ -307,3 +299,4 @@ function loadAllData() {
 
 // Auto-refresh analytics every 30 seconds
 setInterval(loadAnalytics, 30000);
+
