@@ -451,12 +451,25 @@ a {
             border-top: 1px solid #333 !important;
         }
         
+        .nav-actions {
+            background: #181a1b !important;
+        }
+        
         .nav-link {
             color: #e0e0e0 !important;
         }
         
         .nav-link:hover {
             color: #667eea !important;
+        }
+        
+        .cta-btn {
+            background: #667eea !important;
+            color: white !important;
+        }
+        
+        .cta-btn:hover {
+            background: #764ba2 !important;
         }
     }
 }

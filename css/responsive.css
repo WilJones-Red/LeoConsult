@@ -144,6 +144,17 @@
         background: #e9ecef;
     }
     
+    /* Dark mode dropdown fix */
+    @media (prefers-color-scheme: dark) {
+        .dropdown-menu {
+            background: #2a2a2a;
+        }
+        
+        .dropdown-item:hover {
+            background: #333;
+        }
+    }
+    
     .nav-toggle.active .bar:nth-child(1) {
         transform: rotate(-45deg) translate(-5px, 6px);
     }
@@ -179,8 +190,15 @@
     /* Hero Section */
     .hero {
         min-height: auto;
-        padding: 6rem 0 2rem;
+        padding: 6rem 0 6rem;
         margin-top: 80px;
+        margin-bottom: 0;
+    }
+    
+    .hero-stats-slider {
+        position: relative;
+        bottom: 0;
+        margin-top: 3rem;
     }
     
     /* Hero Icons - Mobile Size */
