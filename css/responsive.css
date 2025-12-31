@@ -220,14 +220,30 @@
     /* Hero Section */
     .hero {
         min-height: auto;
-        padding: 6rem 0 3rem;
+        padding: 6rem 0 8rem;
         margin-top: 80px;
         margin-bottom: 0;
+        position: relative;
     }
     
-    /* Hide animated stats bar on mobile */
+    /* Show animated stats bar on mobile with adjusted positioning */
     .hero-stats-slider {
-        display: none;
+        display: block;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 1rem 0;
+    }
+    
+    /* Adjust hero scroll arrow on mobile to avoid overlapping */
+    .hero-scroll {
+        bottom: 4.5rem;
+        z-index: 2;
+    }
+    
+    .hero-cta {
+        margin-bottom: 1.5rem;
     }
     
     /* Hero Icons - Mobile Size */
