@@ -114,7 +114,8 @@ function trackEvent(eventName, parameters = {}) {
 // ========================================
 
 function sendCustomAnalytics(eventName, data) {
-    // Send to your custom analytics service
+    // Custom analytics endpoint disabled - uncomment when backend is ready
+    /*
     const analyticsData = {
         event: eventName,
         data: data,
@@ -132,6 +133,7 @@ function sendCustomAnalytics(eventName, data) {
     }).catch(error => {
         console.warn('Failed to send custom analytics:', error);
     });
+    */
 }
 
 // ========================================
