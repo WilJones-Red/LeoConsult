@@ -38,10 +38,39 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Close mobile menu when clicking on a link
     navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            navMenu.classList.remove('active');
-            navToggle.classList.remove('active');
-            document.body.classList.remove('menu-open');
+        link.addEventListener('click', function(e) {
+            // Don't close menu if clicking dropdown toggle
+            if (!link.classList.contains('dropdown-toggle')) {
+                navMenu.classList.remove('active');
+                navToggle.classList.remove('active');
+                document.body.classList.remove('menu-open');
+            }
+        });
+    });
+    
+    // Mobile dropdown toggle
+    const dropdownToggle = document.querySelector('.dropdown-toggle');
+    const navDropdown = document.querySelector('.nav-dropdown');
+    
+    if (dropdownToggle && navDropdown) {
+        dropdownToggle.addEventListener('click', function(e) {
+            if (window.innerWidth <= 768) {
+                e.preventDefault();
+                navDropdown.classList.toggle('active');
+            }
+        });
+    }
+    
+    // Close dropdown when clicking dropdown items on mobile
+    const dropdownItems = document.querySelectorAll('.dropdown-item');
+    dropdownItems.forEach(item => {
+        item.addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+                navDropdown.classList.remove('active');
+                navMenu.classList.remove('active');
+                navToggle.classList.remove('active');
+                document.body.classList.remove('menu-open');
+            }
         });
     });
     
