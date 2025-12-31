@@ -2446,8 +2446,9 @@ a:focus {
         color: #e0e0e0;
     }
 
-    .hero-description {
-        color: #a0a0a0;
+    .hero-description,
+    .service-hero-description {
+        color: #c0c0c0 !important;
     }
 
     .stat-label {
@@ -2496,6 +2497,15 @@ a:focus {
         border-color: #4a5568;
     }
 
+    .case-image {
+        background: #1a1a1a !important;
+    }
+
+    .case-category {
+        background: #667eea !important;
+        color: white !important;
+    }
+
     /* Text Colors */
     .service-title,
     .case-title,
@@ -2513,7 +2523,7 @@ a:focus {
     .benefit h4,
     .step-content h3,
     .tech-category h3 {
-        color: #e0e0e0;
+        color: #f5f5f5 !important;
     }
 
     .service-description,
@@ -2538,13 +2548,44 @@ a:focus {
     .about-stat p,
     .metric-label,
     .form-note {
-        color: #a0a0a0;
+        color: #c0c0c0 !important;
+    }
+
+    .case-link {
+        color: #c0c0c0 !important;
     }
 
     /* Comparison Table - Special Black Background */
+    .comparison-section {
+        background: #1a1a1a !important;
+    }
+
     .comparison-table {
-        background: #2d3748;
-        border-color: #4a5568;
+        background: #2d3748 !important;
+        border-color: #4a5568 !important;
+    }
+
+    .comparison-table thead {
+        background: #1a1a1a !important;
+    }
+
+    .comparison-table th {
+        color: #f5f5f5 !important;
+        border-bottom-color: #4a5568 !important;
+    }
+
+    .comparison-table td {
+        color: #c0c0c0 !important;
+        border-bottom-color: #4a5568 !important;
+    }
+
+    .category-row td {
+        background: #1a1a1a !important;
+        color: #f5f5f5 !important;
+    }
+
+    .feature-name {
+        color: #f5f5f5 !important;
     }
 
     .competitive-comparison {
@@ -2562,6 +2603,144 @@ a:focus {
 
     .competitive-comparison tbody tr:hover {
         background: #2d3748;
+    }
+
+    /* Pricing Cards */
+    .pricing-tiers {
+        background: #1a1a1a !important;
+    }
+
+    .pricing-card {
+        background: #2d3748 !important;
+        border-color: #4a5568 !important;
+    }
+
+    .pricing-card.featured {
+        border-color: #667eea !important;
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3) !important;
+    }
+
+    .pricing-badge {
+        background: #667eea !important;
+        color: white !important;
+    }
+
+    .pricing-header {
+        border-bottom-color: #4a5568 !important;
+    }
+
+    .pricing-header h3 {
+        color: #f5f5f5 !important;
+    }
+
+    .price,
+    .price-custom {
+        color: #f5f5f5 !important;
+    }
+
+    .currency {
+        color: #818cf8 !important;
+    }
+
+    .period,
+    .pricing-desc {
+        color: #c0c0c0 !important;
+    }
+
+    .features-title {
+        color: #c0c0c0 !important;
+    }
+
+    .pricing-features li {
+        color: #c0c0c0 !important;
+    }
+
+    .pricing-features li i {
+        color: #10b981 !important;
+    }
+
+    /* Services Breakdown Section */
+    .services-breakdown {
+        background: #1a1a1a !important;
+    }
+
+    .service-feature-card {
+        background: #2d3748 !important;
+        border-color: #4a5568 !important;
+    }
+
+    .service-feature-card h3 {
+        color: #f5f5f5 !important;
+    }
+
+    .service-feature-card p {
+        color: #c0c0c0 !important;
+    }
+
+    .service-icon {
+        color: #818cf8 !important;
+        background: rgba(129, 140, 248, 0.1) !important;
+    }
+
+    .service-list li {
+        color: #c0c0c0 !important;
+    }
+
+    /* FAQ Section */
+    .faq-section {
+        background: #2d3748 !important;
+    }
+
+    .faq-item {
+        background: #1a1a1a !important;
+        border-color: #4a5568 !important;
+    }
+
+    .faq-item h3 {
+        color: #f5f5f5 !important;
+    }
+
+    .faq-item p,
+    .faq-answer {
+        color: #c0c0c0 !important;
+    }
+
+    /* Process Section */
+    .process-section {
+        background: #1a1a1a !important;
+    }
+
+    .process-step {
+        background: #2d3748 !important;
+        border-color: #4a5568 !important;
+    }
+
+    .step-number {
+        color: #818cf8 !important;
+        background: rgba(129, 140, 248, 0.1) !important;
+    }
+
+    .process-step h3 {
+        color: #f5f5f5 !important;
+    }
+
+    .process-step p {
+        color: #c0c0c0 !important;
+    }
+
+    /* Technologies Section */
+    .technologies-section {
+        background: #2d3748 !important;
+    }
+
+    .tech-grid {
+        color: #c0c0c0 !important;
+    }
+
+    .tech-item {
+        background: #1a1a1a !important;
+        border-color: #4a5568 !important;
+        color: #c0c0c0 !important;
     }
 
     /* Forms */
