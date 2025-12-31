@@ -2,7 +2,8 @@
 // MAIN JAVASCRIPT FILE
 // ========================================
 
-// Supabase client setup
+// Supabase client setup - disabled for now, only needed in admin panel
+/*
 const SUPABASE_URL = 'https://clpcskkoguomoihnisai.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNscGNza2tvZ3VvbW9paG5pc2FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUyMjYyMTIsImV4cCI6MjA3MDgwMjIxMn0.TpZQuKm0cVvl7lJbXt2Iw1_s3HlLLIIbRr7lIOyVsBo';
 let supabase;
@@ -17,6 +18,7 @@ if (window.supabase) {
     };
     document.head.appendChild(script);
 }
+*/
 
 document.addEventListener('DOMContentLoaded', function() {
     
