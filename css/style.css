@@ -552,7 +552,7 @@ a {
     font-weight: 700;
     line-height: 1.2;
     margin-bottom: 1.5rem;
-    background: #1E40AF;
+    background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
