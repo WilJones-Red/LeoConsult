@@ -221,14 +221,14 @@ a {
 
 .btn {
     display: inline-block;
-    padding: 1rem 2rem;
+    padding: 0.75rem 1.5rem;
     border-radius: 4px;
     font-weight: 600;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
     border: none;
-    font-size: 1rem;
+    font-size: 0.9rem;
     text-decoration: none;
 }
 
@@ -552,7 +552,10 @@ a {
     font-weight: 700;
     line-height: 1.2;
     margin-bottom: 1.5rem;
-    color: #1a1a1a;
+    background: #1E40AF;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     max-width: 1000px;
     margin-left: auto;
     margin-right: auto;
@@ -562,16 +565,30 @@ a {
 }
 
 .hero-description {
-    font-size: 1.15rem;
-    color: #555;
-    margin-bottom: 2.5rem;
-    line-height: 1.6;
-    max-width: 700px;
+    font-size: 1.25rem;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+    max-width: 800px;
     margin-left: auto;
     margin-right: auto;
     opacity: 0;
     transform: translateY(30px);
     animation: fadeInUp 0.8s ease-out 0.4s forwards;
+}
+
+.hero-supporting {
+    font-size: 1.15rem;
+    color: #6b7280;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: 400;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.8s ease-out 0.5s forwards;
 }
 
 .hero-stats {
@@ -604,6 +621,7 @@ a {
     gap: 1rem;
     flex-wrap: wrap;
     justify-content: center;
+    margin-top: 3rem;
     opacity: 0;
     transform: translateY(30px);
     animation: fadeInUp 0.8s ease-out 0.8s forwards;
