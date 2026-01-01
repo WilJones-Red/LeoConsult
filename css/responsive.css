@@ -410,6 +410,46 @@
         grid-template-columns: 1fr;
     }
     
+    /* Process Section Mobile */
+    .process-timeline::before {
+        left: 20px;
+    }
+    
+    .process-step {
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .step-number {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+    
+    .step-content {
+        padding: 1.5rem;
+    }
+    
+    .step-content h3 {
+        font-size: 1.2rem;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .step-timeline {
+        font-size: 0.85rem;
+    }
+    
+    .process-guarantee {
+        flex-direction: column;
+        text-align: center;
+        padding: 2rem;
+    }
+    
+    .guarantee-content h3 {
+        font-size: 1.25rem;
+    }
+
     /* Footer */
     .footer-content {
         grid-template-columns: 1fr;
@@ -436,6 +476,33 @@
     .trust-logos img {
         height: 30px;
     }
+    
+    /* Services Overview Section */
+    .services-overview {
+        padding: 3rem 0;
+    }
+    
+    .services-overview-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .service-overview-card {
+        padding: 2rem;
+    }
+    
+    .service-overview-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .service-overview-icon i {
+        font-size: 1.5rem;
+    }
+    
+    .service-overview-title {
+        font-size: 1.25rem;
+    }
 }
 
 /* Small Mobile Styles */
@@ -461,6 +528,19 @@
     .btn {
         padding: 0.8rem 1.5rem;
         font-size: 0.9rem;
+    }
+    
+    /* Services Overview - Extra Small Screens */
+    .services-overview-card {
+        padding: 1.5rem;
+    }
+    
+    .service-overview-title {
+        font-size: 1.1rem;
+    }
+    
+    .service-overview-description {
+        font-size: 0.95rem;
     }
     
     /* Cards */
