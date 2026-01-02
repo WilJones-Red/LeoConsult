@@ -496,7 +496,7 @@ a {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('../assets/vector.png');
+    background-image: url('../assets/background-vector.png');
     background-size: 1800px 800px;
     background-repeat: repeat;
     background-position: left center;
@@ -512,7 +512,7 @@ a {
     left: 0;
     width: 50%;
     height: 100%;
-    background-image: url('../assets/vector.png');
+    background-image: url('../assets/background-vector.png');
     background-size: 1800px 800px;
     background-repeat: repeat;
     background-position: left center;
@@ -1921,7 +1921,7 @@ a {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('../assets/vector.png');
+    background-image: url('../assets/background-vector.png');
     background-size: 1800px 800px;
     background-repeat: repeat;
     background-position: left center;
@@ -1937,7 +1937,7 @@ a {
     left: 0;
     width: 50%;
     height: 100%;
-    background-image: url('../assets/vector.png');
+    background-image: url('../assets/background-vector.png');
     background-size: 1800px 800px;
     background-repeat: repeat;
     background-position: left center;
