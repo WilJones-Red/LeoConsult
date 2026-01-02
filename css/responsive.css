@@ -36,6 +36,10 @@
         gap: 3rem;
     }
     
+    .value-text {
+        text-align: center;
+    }
+    
     .footer-content {
         grid-template-columns: 1fr 1fr;
         gap: 2rem;

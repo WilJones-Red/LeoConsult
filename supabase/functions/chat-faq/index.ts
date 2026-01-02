@@ -110,11 +110,24 @@ serve(async (req) => {
     let bestMatch = null
     let bestScore = 0
 
+    // First check for exact match (case-insensitive)
+    const normalizedQuery = query.toLowerCase().trim()
     for (const faq of faqs || []) {
-      const score = calculateScore(query, faq.question, faq.answer)
-      if (score > bestScore) {
-        bestScore = score
+      if (faq.question.toLowerCase().trim() === normalizedQuery) {
         bestMatch = faq
+        bestScore = 10.0 // High score for exact match
+        break
+      }
+    }
+
+    // If no exact match, use keyword scoring
+    if (!bestMatch) {
+      for (const faq of faqs || []) {
+        const score = calculateScore(query, faq.question, faq.answer)
+        if (score > bestScore) {
+          bestScore = score
+          bestMatch = faq
+        }
       }
     }
 
