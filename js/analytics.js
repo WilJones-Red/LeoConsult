@@ -325,129 +325,22 @@ function initializeErrorTracking() {
 }
 
 // ========================================
-// GDPR COMPLIANCE
-// ========================================
-
-function initializeGDPRCompliance() {
-    // Check for consent before initializing tracking
-    const hasConsent = localStorage.getItem('analytics_consent');
-    
-    if (hasConsent === 'true') {
-        initializeAllTracking();
-    } else {
-        showConsentBanner();
-    }
-}
-
-function showConsentBanner() {
-    const banner = document.createElement('div');
-    banner.id = 'consent-banner';
-    banner.innerHTML = `
-        <div class="consent-content">
-            <p>We use cookies and analytics to improve your experience. By using our site, you consent to our use of cookies.</p>
-            <div class="consent-actions">
-                <button id="accept-consent" class="btn btn-primary">Accept</button>
-                <button id="decline-consent" class="btn btn-secondary">Decline</button>
-                <a href="/privacy-policy" class="privacy-link">Privacy Policy</a>
-            </div>
-        </div>
-    `;
-    
-    // Add banner styles
-    const style = document.createElement('style');
-    style.textContent = `
-        #consent-banner {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #1a1a1a;
-            color: white;
-            padding: 1rem;
-            z-index: 10000;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
-        }
-        .consent-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        .consent-actions {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-        .privacy-link {
-            color: #ccc;
-            text-decoration: underline;
-        }
-        @media (max-width: 768px) {
-            .consent-content {
-                flex-direction: column;
-                text-align: center;
-            }
-        }
-    `;
-    document.head.appendChild(style);
-    document.body.appendChild(banner);
-    
-    // Handle consent actions
-    document.getElementById('accept-consent').addEventListener('click', function() {
-        localStorage.setItem('analytics_consent', 'true');
-        banner.remove();
-        style.remove();
-        initializeAllTracking();
-    });
-    
-    document.getElementById('decline-consent').addEventListener('click', function() {
-        localStorage.setItem('analytics_consent', 'false');
-        banner.remove();
-        style.remove();
-    });
-}
-
-// ========================================
-// INITIALIZE ALL TRACKING
-// ========================================
-
-function initializeAllTracking() {
-    // Core analytics platforms
-    initializeGA4();
-    // initializeFacebookPixel(); // Uncomment when you have pixel ID
-    // initializeLinkedInInsight(); // Uncomment when you have partner ID
-    
-    // Event tracking
-    initializeScrollTracking();
-    initializeTimeTracking();
-    initializeClickTracking();
-    initializeFormTracking();
-    
-    // Performance and error tracking
-    trackPerformance();
-    initializeErrorTracking();
-    
-    // Heat maps (uncomment when you have IDs)
-    // initializeHeatMap();
-    
-    console.log('📈 Analytics initialized successfully');
-}
-
-// ========================================
 // INITIALIZATION
 // ========================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize GDPR compliance check
-    initializeGDPRCompliance();
+    // Event tracking (only works if GA is loaded via cookie consent)
+    initializeScrollTracking();
+    initializeTimeTracking();
+    initializeClickTracking();
+    initializeFormTracking();
+    initializeErrorTracking();
     
-    // Track page view
-    trackEvent('page_view', {
-        page_url: window.location.href,
-        page_title: document.title,
+    // Track page view if GA is available
+    if (typeof gtag !== 'undefined') {
+        trackEvent('page_view', {
+            page_url: window.location.href,
+            page_title: document.title,
         user_id: getUserId(),
         session_id: getSessionId()
     });
