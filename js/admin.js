@@ -6,51 +6,140 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let currentEditId = null;
 
+// Check if user has admin access based on their rank metadata
+function isAuthorizedAdmin(user) {
+    console.log('isAuthorizedAdmin: Checking user:', user.email);
+    console.log('isAuthorizedAdmin: User metadata:', user.user_metadata);
+    
+    const rank = user.user_metadata?.rank;
+    console.log('isAuthorizedAdmin: Rank:', rank);
+    
+    // Allow super_admin and admin ranks
+    const authorized = rank === 'super_admin' || rank === 'admin';
+    console.log('isAuthorizedAdmin: Result:', authorized);
+    
+    return authorized;
+}
+
 // Authentication
 async function login() {
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
+    const errorEl = document.getElementById('auth-error');
     
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
-        email: email,
-        password: password
-    });
+    console.log('Login attempt started for:', email);
     
-    if (error) {
-        document.getElementById('auth-error').textContent = error.message;
+    if (!email || !password) {
+        errorEl.textContent = 'Please enter both email and password';
         return;
     }
-    
-    showAdminPanel();
-    loadAllData();
+
+    try {
+        console.log('Attempting Supabase authentication...');
+        console.log('Supabase URL:', SUPABASE_URL);
+        console.log('Supabase client initialized:', !!supabaseClient);
+        
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+        
+        console.log('Auth response received');
+        console.log('Data:', data);
+        console.log('Error:', error);
+        
+        if (error) {
+            console.error('Supabase auth error:', error);
+            errorEl.textContent = error.message;
+            return;
+        }
+
+        console.log('Authentication successful, checking authorization...');
+        console.log('User:', data.user);
+        
+        // Check if user is authorized admin based on rank
+        if (!isAuthorizedAdmin(data.user)) {
+            console.warn('Unauthorized access attempt by:', data.user.email);
+            errorEl.textContent = 'Access denied. You do not have admin privileges.';
+            
+            // Sign out the unauthorized user
+            await supabaseClient.auth.signOut();
+            
+            // Show access denied screen
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('access-denied').style.display = 'block';
+            return;
+        }
+        
+        console.log('User authorized, showing admin panel');
+        showAdminPanel();
+        loadAllData();
+    } catch (err) {
+        errorEl.textContent = 'Login failed. Please try again.';
+        console.error('Login error:', err);
+    }
+}
+
+function returnToLogin() {
+    document.getElementById('access-denied').style.display = 'none';
+    document.getElementById('auth-container').style.display = 'block';
+    document.getElementById('login-email').value = '';
+    document.getElementById('login-password').value = '';
+    document.getElementById('auth-error').textContent = '';
 }
 
 async function logout() {
     await supabaseClient.auth.signOut();
     document.getElementById('auth-container').style.display = 'block';
     document.getElementById('admin-container').style.display = 'none';
+    document.getElementById('access-denied').style.display = 'none';
+    document.getElementById('login-email').value = '';
+    document.getElementById('login-password').value = '';
+    document.getElementById('auth-error').textContent = '';
 }
 
 function showAdminPanel() {
     document.getElementById('auth-container').style.display = 'none';
+    document.getElementById('access-denied').style.display = 'none';
     document.getElementById('admin-container').style.display = 'block';
 }
 
-// Check if user is already logged in
+// Check if user is already logged in and authorized
+console.log('Checking for existing session...');
 supabaseClient.auth.getSession().then(({ data: { session } }) => {
+    console.log('Session check result:', session);
     if (session) {
-        showAdminPanel();
-        loadAllData();
+        console.log('Session found, checking authorization for:', session.user.email);
+        if (isAuthorizedAdmin(session.user)) {
+            console.log('User is authorized, showing admin panel');
+            showAdminPanel();
+            loadAllData();
+        } else {
+            console.warn('Unauthorized session detected for:', session.user.email);
+            supabaseClient.auth.signOut();
+            document.getElementById('access-denied').style.display = 'block';
+            document.getElementById('auth-container').style.display = 'none';
+        }
+    } else {
+        console.log('No existing session found');
     }
+}).catch(err => {
+    console.error('Error getting session:', err);
 });
 
 supabaseClient.auth.onAuthStateChange((event, session) => {
     if (session) {
-        showAdminPanel();
-        loadAllData();
+        if (isAuthorizedAdmin(session.user)) {
+            showAdminPanel();
+            loadAllData();
+        } else {
+            console.warn('Unauthorized access attempt:', session.user.email);
+            supabaseClient.auth.signOut();
+        }
     } else {
         document.getElementById('auth-container').style.display = 'block';
         document.getElementById('admin-container').style.display = 'none';
+        document.getElementById('access-denied').style.display = 'none';
     }
 });
 
@@ -67,6 +156,7 @@ function showTab(tabName) {
     // Load data for the tab
     if (tabName === 'logs') loadChatLogs();
     if (tabName === 'low-conf') loadLowConfidence();
+    if (tabName === 'users') loadUsers();
 }
 
 // Load Analytics
@@ -291,6 +381,71 @@ async function retrainModel() {
     }
 }
 
+// User Management Functions
+function showAddUser() {
+    document.getElementById('user-modal').style.display = 'flex';
+    document.getElementById('user-email').value = '';
+    document.getElementById('user-role').value = 'admin';
+}
+
+function closeUserModal() {
+    document.getElementById('user-modal').style.display = 'none';
+}
+
+async function saveUser() {
+    const email = document.getElementById('user-email').value;
+    const rank = document.getElementById('user-role').value;
+    
+    if (!email) {
+        alert('Please enter an email address');
+        return;
+    }
+    
+    if (!email.includes('@')) {
+        alert('Please enter a valid email address');
+        return;
+    }
+    
+    try {
+        // Get current session to send auth token
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        
+        if (!session) {
+            alert('You must be logged in to add users');
+            return;
+        }
+        
+        // Call the Supabase Edge Function to update user rank
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/update-user-rank`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${session.access_token}`,
+                'apikey': SUPABASE_ANON_KEY
+            },
+            body: JSON.stringify({ email, rank })
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.error || 'Failed to update user rank');
+        }
+        
+        alert(`✅ ${result.message}`);
+        closeUserModal();
+        
+    } catch (error) {
+        if (error.message.includes('User not found')) {
+            alert('❌ User not found. The user must have a Supabase account first.\n\nTo add a new admin:\n1. Have them sign up at your website\n2. Then come back here to grant them admin access');
+        } else if (error.message.includes('Only super administrators')) {
+            alert('❌ Only super administrators can manage user ranks');
+        } else {
+            alert('❌ Error: ' + error.message);
+        }
+    }
+}
+
 // Load all data
 function loadAllData() {
     loadAnalytics();
@@ -299,4 +454,3 @@ function loadAllData() {
 
 // Auto-refresh analytics every 30 seconds
 setInterval(loadAnalytics, 30000);
-

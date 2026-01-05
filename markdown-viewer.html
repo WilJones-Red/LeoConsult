@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Viewer | Leo Consult</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #E7EBF5;
+            min-height: 100vh;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background: white;
+            padding: 20px 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .nav-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            height: 50px;
+            width: auto;
+        }
+
+        .brand-name {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: #3B5BDB;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .nav-link {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            border-radius: 6px;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-link:hover {
+            background: #3B5BDB;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .document-container {
+            background: white;
+            padding: 60px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            line-height: 1.7;
+        }
+
+        .markdown-content h1 {
+            color: #3B5BDB;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3B5BDB;
+            font-size: 2.5em;
+        }
+
+        .markdown-content h2 {
+            color: #3B5BDB;
+            margin-top: 40px;
+            margin-bottom: 15px;
+            font-size: 2em;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #E7EBF5;
+        }
+
+        .markdown-content h3 {
+            color: #555;
+            margin-top: 30px;
+            margin-bottom: 12px;
+            font-size: 1.5em;
+        }
+
+        .markdown-content h4 {
+            color: #666;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .markdown-content p {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .markdown-content ul, .markdown-content ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        .markdown-content li {
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .markdown-content code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+        }
+
+        .markdown-content pre {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 15px;
+            border-left: 4px solid #3B5BDB;
+        }
+
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+            color: #333;
+        }
+
+        .markdown-content blockquote {
+            border-left: 4px solid #3B5BDB;
+            padding-left: 20px;
+            margin: 20px 0;
+            color: #666;
+            font-style: italic;
+        }
+
+        .markdown-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .markdown-content th, .markdown-content td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .markdown-content th {
+            background: #3B5BDB;
+            color: white;
+            font-weight: 600;
+        }
+
+        .markdown-content tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .markdown-content a {
+            color: #3B5BDB;
+            text-decoration: none;
+        }
+
+        .markdown-content a:hover {
+            text-decoration: underline;
+        }
+
+        .markdown-content hr {
+            border: none;
+            border-top: 2px solid #E7EBF5;
+            margin: 30px 0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #666;
+        }
+
+        .error {
+            text-align: center;
+            padding: 60px;
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo-section">
+                <img src="assets/logo.png" alt="Leo Consult Logo" class="logo">
+                <span class="brand-name">Document Viewer</span>
+            </div>
+            <div class="nav-links">
+                <a href="employee.html" style="text-decoration: none;">
+                    <button class="nav-link">← Back to Resources</button>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="document-container">
+            <div id="content" class="markdown-content">
+                <div class="loading">Loading document...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get file parameter from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const file = urlParams.get('file');
+
+        if (!file) {
+            document.getElementById('content').innerHTML = '<div class="error">No file specified</div>';
+        } else {
+            // Fetch and render markdown
+            fetch(file)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('File not found (HTTP ' + response.status + ')');
+                    }
+                    return response.text();
+                })
+                .then(markdown => {
+                    // Convert markdown to HTML using marked
+                    const html = marked.marked ? marked.marked(markdown) : marked(markdown);
+                    document.getElementById('content').innerHTML = html;
+                    
+                    // Update page title with document title
+                    const h1 = document.querySelector('.markdown-content h1');
+                    if (h1) {
+                        document.title = h1.textContent + ' | Leo Consult';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading document:', error);
+                    document.getElementById('content').innerHTML = 
+                        '<div class="error">Error loading document: ' + error.message + '<br><br>File path: ' + file + '<br><br>Make sure you are accessing this page through a web server (not file://)</div>';
+                });
+        }
+    </script>
+</body>
+</html>
