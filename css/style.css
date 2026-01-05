@@ -4335,6 +4335,124 @@ a:focus {
     margin: 0;
 }
 
+/* ========================================
+   COOKIE CONSENT BANNER
+======================================== */
+
+#cookie-consent-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid #e5e7eb;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+    padding: 1.25rem 0;
+    z-index: 10000;
+    opacity: 0;
+    transform: translateY(100%);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#cookie-consent-banner.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.cookie-consent-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.cookie-consent-text {
+    flex: 1;
+    min-width: 300px;
+}
+
+.cookie-consent-text p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #4b5563;
+    line-height: 1.5;
+}
+
+.cookie-consent-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.cookie-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.cookie-btn-accept {
+    background: #1E40AF;
+    color: white;
+}
+
+.cookie-btn-accept:hover {
+    background: #1e3a8a;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+}
+
+.cookie-btn-reject {
+    background: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+}
+
+.cookie-btn-reject:hover {
+    background: #e5e7eb;
+    border-color: #9ca3af;
+}
+
+.cookie-link {
+    color: #1E40AF;
+    font-size: 0.9rem;
+    text-decoration: underline;
+    padding: 0.5rem;
+}
+
+.cookie-link:hover {
+    color: #1e3a8a;
+}
+
+/* Mobile Responsive */
+@media screen and (max-width: 768px) {
+    .cookie-consent-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+    
+    .cookie-consent-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    .cookie-btn {
+        padding: 0.65rem 1.25rem;
+        font-size: 0.9rem;
+    }
+}
+
 /* Responsive Adjustments */
 @media screen and (max-width: 1024px) {
     .pricing-grid {

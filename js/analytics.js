@@ -1,152 +1,34 @@
 // ========================================
 // ANALYTICS & TRACKING
+// Enhanced Google Analytics tracking for Leo Consult
+// Works with cookie-consent.js
 // ========================================
-
-// ========================================
-// GOOGLE ANALYTICS 4 SETUP
-// ========================================
-
-// Initialize Google Analytics
-function initializeGA4() {
-    // Replace 'GA_MEASUREMENT_ID' with your actual GA4 measurement ID
-    const measurementId = 'GA_MEASUREMENT_ID';
-    
-    // Load gtag script if not already loaded
-    if (!window.gtag) {
-        const script = document.createElement('script');
-        script.async = true;
-        script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
-        document.head.appendChild(script);
-        
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        window.gtag = gtag;
-        gtag('js', new Date());
-        gtag('config', measurementId, {
-            page_title: document.title,
-            page_location: window.location.href
-        });
-    }
-}
-
-// ========================================
-// FACEBOOK PIXEL SETUP
-// ========================================
-
-function initializeFacebookPixel() {
-    // Replace with your Facebook Pixel ID
-    const pixelId = 'YOUR_FACEBOOK_PIXEL_ID';
-    
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    
-    fbq('init', pixelId);
-    fbq('track', 'PageView');
-}
-
-// ========================================
-// LINKEDIN INSIGHT TAG
-// ========================================
-
-function initializeLinkedInInsight() {
-    // Replace with your LinkedIn Partner ID
-    const partnerId = 'YOUR_LINKEDIN_PARTNER_ID';
-    
-    _linkedin_partner_id = partnerId;
-    window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
-    window._linkedin_data_partner_ids.push(_linkedin_partner_id);
-    
-    (function(l) {
-        if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
-        window.lintrk.q=[]}
-        var s = document.getElementsByTagName("script")[0];
-        var b = document.createElement("script");
-        b.type = "text/javascript";b.async = true;
-        b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
-        s.parentNode.insertBefore(b, s);})(window.lintrk);
-}
 
 // ========================================
 // CUSTOM EVENT TRACKING
 // ========================================
 
 function trackEvent(eventName, parameters = {}) {
+    // Only track if GA is loaded (user accepted cookies)
+    if (typeof gtag === 'undefined') {
+        console.log('📊 Event not tracked (no consent):', eventName);
+        return;
+    }
+    
     // Add timestamp and page info
     const eventData = {
         ...parameters,
         timestamp: new Date().toISOString(),
         page_url: window.location.href,
         page_title: document.title,
-        user_agent: navigator.userAgent,
         referrer: document.referrer
     };
     
     // Google Analytics 4
-    if (typeof gtag !== 'undefined') {
-        gtag('event', eventName, eventData);
-    }
-    
-    // Facebook Pixel
-    if (typeof fbq !== 'undefined') {
-        fbq('track', eventName, eventData);
-    }
-    
-    // LinkedIn Insight
-    if (typeof lintrk !== 'undefined') {
-        lintrk('track', { conversion_id: eventName });
-    }
-    
-    // Custom analytics endpoint
-    sendCustomAnalytics(eventName, eventData);
+    gtag('event', eventName, eventData);
     
     // Console log for debugging
     console.log('📊 Event tracked:', eventName, eventData);
-}
-
-// ========================================
-// CUSTOM ANALYTICS ENDPOINT
-// ========================================
-
-function sendCustomAnalytics(eventName, data) {
-    // Custom analytics endpoint disabled - uncomment when backend is ready
-    /*
-    const analyticsData = {
-        event: eventName,
-        data: data,
-        session_id: getSessionId(),
-        user_id: getUserId()
-    };
-    
-    // Use fetch to send data (replace with your endpoint)
-    fetch('/api/analytics', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(analyticsData)
-    }).catch(error => {
-        console.warn('Failed to send custom analytics:', error);
-    });
-    */
-}
-
-// ========================================
-// USER IDENTIFICATION
-// ========================================
-
-function getUserId() {
-    let userId = localStorage.getItem('user_id');
-    if (!userId) {
-        userId = 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
-        localStorage.setItem('user_id', userId);
-    }
-    return userId;
 }
 
 function getSessionId() {
