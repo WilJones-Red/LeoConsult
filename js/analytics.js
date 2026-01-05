@@ -341,9 +341,10 @@ document.addEventListener('DOMContentLoaded', function() {
         trackEvent('page_view', {
             page_url: window.location.href,
             page_title: document.title,
-        user_id: getUserId(),
-        session_id: getSessionId()
-    });
+            user_id: getUserId(),
+            session_id: getSessionId()
+        });
+    }
     
     // Track user engagement
     let isEngaged = false;
