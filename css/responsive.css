@@ -36,6 +36,28 @@
         gap: 3rem;
     }
     
+    .how-we-work-content {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+    
+    .approach-column {
+        position: static;
+    }
+    
+    .process-grid {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .process-arrow {
+        transform: rotate(90deg);
+    }
+    
+    .process-phase {
+        max-width: 100%;
+    }
+    
     .value-text {
         text-align: center;
     }
@@ -362,6 +384,27 @@
         align-items: center;
     }
     
+    .value-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .value-arrow {
+        transform: rotate(90deg);
+        margin: 1rem 0;
+    }
+    
+    /* Reset emoji custom positioning on mobile */
+    .point-icon img,
+    .value-point:first-child .point-icon img,
+    .value-points > .value-point:nth-child(3) .point-icon img {
+        width: 80px !important;
+        height: 80px !important;
+        margin-left: 0 !important;
+        margin-top: -30px !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
     /* Lead Magnet */
     .magnet-form {
         padding: 2rem;
@@ -372,6 +415,15 @@
     .blog-grid {
         grid-template-columns: 1fr;
         gap: 1.5rem;
+    }
+    
+    .testimonials-carousel {
+        padding: 1.5rem;
+    }
+    
+    .testimonial-text {
+        font-size: 1rem;
+        line-height: 1.6;
     }
     
     .case-metrics,
@@ -609,6 +661,23 @@
     .metric-value {
         font-size: 1.2rem;
     }
+    
+    /* Testimonials - Small Screens */
+    .testimonials-carousel {
+        padding: 1.25rem;
+    }
+    
+    .testimonial-text {
+        font-size: 0.95rem;
+    }
+    
+    .testimonial-author h4 {
+        font-size: 0.9rem;
+    }
+    
+    .testimonial-author p {
+        font-size: 0.8rem;
+    }
 }
 
 /* Extra Small Devices */
@@ -633,6 +702,17 @@
     .point-icon {
         width: 40px;
         height: 40px;
+    }
+    
+    /* Reset emoji custom positioning on mobile */
+    .point-icon img,
+    .value-point:first-child .point-icon img,
+    .value-points > .value-point:nth-child(3) .point-icon img {
+        width: 80px !important;
+        height: 80px !important;
+        margin-left: 0 !important;
+        margin-top: -30px !important;
+        margin-bottom: 0.5rem !important;
     }
     
     .method-icon {
