@@ -1779,6 +1779,30 @@ a {
     gap: 2rem;
 }
 
+.team-photo {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.team-photo img {
+    max-width: 500px;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    object-fit: cover;
+}
+
+.team-caption {
+    margin-top: 1rem;
+}
+
+.team-caption p {
+    font-size: 1rem;
+    color: #666;
+    font-style: italic;
+}
+
 .team-member {
     text-align: center;
     background: white;
