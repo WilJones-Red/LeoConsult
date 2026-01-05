@@ -31,6 +31,15 @@ function trackEvent(eventName, parameters = {}) {
     console.log('📊 Event tracked:', eventName, eventData);
 }
 
+function getUserId() {
+    let userId = localStorage.getItem('user_id');
+    if (!userId) {
+        userId = 'user_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+        localStorage.setItem('user_id', userId);
+    }
+    return userId;
+}
+
 function getSessionId() {
     let sessionId = sessionStorage.getItem('session_id');
     if (!sessionId) {
