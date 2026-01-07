@@ -12,6 +12,19 @@ Disallow: /admin/
 Disallow: /chatbot_backend/
 Disallow: /chatbot_env/
 Disallow: /chat/
+Disallow: /leads.html
+Disallow: /employee.html
+Disallow: /guide.html
+Disallow: /test-form.html
+Disallow: /debug-forms.html
+Disallow: /markdown-viewer.html
+
+# Disallow specific service pages (only pricing.html is public)
+Disallow: /services/business-consulting.html
+Disallow: /services/implementation.html
+
+# Disallow bike rentals case study
+Disallow: /case-studies/bike_rentals_case_study.html
 
 # Allow important directories
 Allow: /blog/
