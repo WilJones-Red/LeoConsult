@@ -19,6 +19,12 @@ Disallow: /test-form.html
 Disallow: /debug-forms.html
 Disallow: /markdown-viewer.html
 
+# Block internal project files in assets
+Disallow: /assets/bike_assets/
+Disallow: /assets/Documentation/
+Disallow: /assets/Rentals
+Disallow: /assets/README.md
+
 # Disallow specific service pages (only pricing.html is public)
 Disallow: /services/business-consulting.html
 Disallow: /services/implementation.html
