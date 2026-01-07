@@ -61,18 +61,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         // Continue anyway - don't block user from booking
                     }
                     
-                    // Submit to Formspree (backup) - only for contact section form
-                    if (formElement.id === 'contact-form') {
-                        const formData = new FormData(formElement);
-                        await fetch('https://formspree.io/f/xblkqjlp', {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'Accept': 'application/json'
-                            }
-                        }).catch(err => console.error('Formspree error:', err));
-                    }
-                    
                     // Store email for analytics
                     sessionStorage.setItem('userEmail', email);
                     
