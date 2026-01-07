@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lead Tracker | Leo Consult</title>
     <link rel="icon" type="image/png" href="assets/logo.png">
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -938,7 +943,6 @@
                                 <th>Company</th>
                                 <th>Role/Title</th>
                                 <th>Status</th>
-                                <th>Score</th>
                                 <th>Est. Value</th>
                                 <th>Close %</th>
                                 <th>Next Action</th>
@@ -953,7 +957,7 @@
     </div>
 
     <script>
-        const API_BASE = 'http://localhost:8000/api';
+        // No longer need API_BASE - using Supabase client from config
         let allLeads = [];
 
         // Section Navigation
@@ -1087,38 +1091,51 @@
         // Global variable for current time period
         let currentTimePeriod = '30d';
 
-        // Load KPIs
+        // Load KPIs - Using Supabase directly
         async function loadKPIs(timePeriod = currentTimePeriod) {
             try {
-                const response = await fetch(`${API_BASE}/kpis?time_period=${timePeriod}`);
-                const data = await response.json();
+                // Get all leads from Supabase
+                const { data: leads, error } = await supabaseClient
+                    .from('leads')
+                    .select('*');
 
+                if (error) throw error;
+
+                // Calculate KPIs from leads data
+                const totalConversations = leads.length;
+                const activeConversations = leads.filter(l => l.status && !l.status.includes('Closed')).length;
+                const dealsInPipeline = leads.filter(l => ['Qualified', 'Proposal Sent'].includes(l.status)).length;
+                const activeClients = leads.filter(l => l.active_client === true).length;
+                
                 // Update KPI cards
-                document.getElementById('kpi-total-conversations').textContent = data.total_conversations;
-                document.getElementById('kpi-active-conversations').textContent = data.active_conversations;
-                document.getElementById('kpi-pipeline').textContent = data.deals_in_pipeline;
-                document.getElementById('kpi-closed-30d').textContent = data.deals_closed_30d;
-                document.getElementById('kpi-avg-deal').textContent = `$${data.avg_deal_size.toLocaleString()}`;
-                document.getElementById('kpi-active-clients').textContent = data.active_clients;
-                document.getElementById('kpi-monthly-revenue').textContent = `$${data.estimated_monthly_revenue.toLocaleString()}`;
+                document.getElementById('kpi-total-conversations').textContent = totalConversations;
+                document.getElementById('kpi-active-conversations').textContent = activeConversations;
+                document.getElementById('kpi-pipeline').textContent = dealsInPipeline;
+                document.getElementById('kpi-active-clients').textContent = activeClients;
+                document.getElementById('kpi-monthly-revenue').textContent = `$0`;
+                document.getElementById('kpi-avg-deal').textContent = `$0`;
+                document.getElementById('kpi-closed-30d').textContent = '0';
 
                 // Update status breakdown
                 const breakdown = document.getElementById('status-breakdown');
                 breakdown.innerHTML = '';
                 
-                const statusData = data.leads_by_status || {};
                 const statuses = ['Identified', 'Reached Out', 'Responded', 'Call Scheduled', 'Qualified', 'Proposal Sent', 'Closed - Won', 'Closed - Lost'];
+                const statusCounts = {};
+                
+                leads.forEach(lead => {
+                    const status = lead.status || 'Identified';
+                    statusCounts[status] = (statusCounts[status] || 0) + 1;
+                });
                 
                 statuses.forEach(status => {
-                    const count = statusData[status] || 0;
-                    if (count > 0 || ['Qualified', 'Proposal Sent', 'Closed - Won'].includes(status)) {
-                        breakdown.innerHTML += `
-                            <div class="breakdown-item">
-                                <div class="breakdown-label">${status}</div>
-                                <div class="breakdown-value">${count}</div>
-                            </div>
-                        `;
-                    }
+                    const count = statusCounts[status] || 0;
+                    breakdown.innerHTML += `
+                        <div class="breakdown-item">
+                            <div class="breakdown-label">${status}</div>
+                            <div class="breakdown-value">${count}</div>
+                        </div>
+                    `;
                 });
 
             } catch (error) {
@@ -1161,8 +1178,23 @@
             tableWrapper.style.display = 'none';
 
             try {
-                const response = await fetch(`${API_BASE}/leads?limit=1000`);
-                allLeads = await response.json();
+                // Fetch from Supabase
+                const { data, error } = await supabaseClient
+                    .from('leads')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(1000);
+                
+                if (error) throw error;
+                
+                allLeads = data || [];
+                
+                // Calculate lead scores if not present
+                allLeads = allLeads.map(lead => ({
+                    ...lead,
+                    lead_score: lead.lead_score || 0,
+                    id: lead.id
+                }));
                 
                 displayLeads(allLeads);
                 
@@ -1170,7 +1202,7 @@
                 tableWrapper.style.display = 'block';
             } catch (error) {
                 console.error('Error loading leads:', error);
-                loading.innerHTML = '<p style="color: #ef4444;">Error loading leads. Please try again.</p>';
+                loading.innerHTML = '<p style="color: #ef4444;">Error loading leads. Please check your Supabase connection.</p>';
             }
         }
 
@@ -1200,7 +1232,6 @@
                         <td>${lead.company_name || '-'}</td>
                         <td>${lead.title || lead.role_category || '-'}</td>
                         <td><span class="status-badge ${statusClass}">${lead.status || 'new'}</span></td>
-                        <td><strong>${lead.lead_score.toFixed(1)}</strong></td>
                         <td>${estimatedValue}</td>
                         <td>${closeProb}</td>
                         <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${lead.next_action || ''}">${lead.next_action || '-'}</td>
@@ -1260,8 +1291,18 @@
 
         async function showNextActions() {
             try {
-                const response = await fetch(`${API_BASE}/next-actions?days_ahead=7`);
-                const actions = await response.json();
+                const sevenDaysFromNow = new Date();
+                sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+                
+                const { data: actions, error } = await supabaseClient
+                    .from('leads')
+                    .select('*')
+                    .not('next_action_date', 'is', null)
+                    .lte('next_action_date', sevenDaysFromNow.toISOString())
+                    .gte('next_action_date', new Date().toISOString())
+                    .order('next_action_date');
+                
+                if (error) throw error;
                 
                 let message = 'Next Actions Due (7 days):\n\n';
                 if (actions.length === 0) {
@@ -1269,7 +1310,7 @@
                 } else {
                     actions.forEach(action => {
                         const date = new Date(action.next_action_date).toLocaleDateString();
-                        message += `${date} - ${action.name} (${action.company})\n${action.next_action}\n\n`;
+                        message += `${date} - ${action.full_name || 'No name'} (${action.company_name || 'No company'})\n${action.next_action}\n\n`;
                     });
                 }
                 alert(message);
@@ -1281,26 +1322,69 @@
 
         async function exportTracker() {
             try {
-                const response = await fetch(`${API_BASE}/tracker/export`);
-                const data = await response.json();
+                // Get all leads from Supabase
+                const { data: leads, error } = await supabaseClient
+                    .from('leads')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                if (!leads || leads.length === 0) {
+                    alert('No leads to export');
+                    return;
+                }
+                
+                // Define columns to export
+                const headers = [
+                    'Email', 'Full Name', 'Title', 'Phone', 'LinkedIn',
+                    'Company', 'Domain', 'Industry', 'Location', 'Company Size',
+                    'Status', 'Start Date', 'Decision Maker', 'Client Health', 'Scope Pressure',
+                    'Active Client', 'Source', 'Created At', 'Notes'
+                ];
                 
                 // Convert to CSV
-                const headers = Object.keys(data[0]);
-                const csv = [
+                const csvRows = [
                     headers.join(','),
-                    ...data.map(row => headers.map(h => JSON.stringify(row[h] || '')).join(','))
-                ].join('\n');
+                    ...leads.map(lead => [
+                        `"${lead.email || ''}"`,
+                        `"${lead.full_name || ''}"`,
+                        `"${lead.title || ''}"`,
+                        `"${lead.phone || ''}"`,
+                        `"${lead.linkedin_url || ''}"`,
+                        `"${lead.company_name || ''}"`,
+                        `"${lead.company_domain || ''}"`,
+                        `"${lead.company_industry || ''}"`,
+                        `"${lead.company_location || ''}"`,
+                        `"${lead.company_size || ''}"`,
+                        `"${lead.status || ''}"`,
+                        `"${lead.start_date || ''}"`,
+                        `"${lead.decision_maker !== null ? (lead.decision_maker ? 'Yes' : 'No') : ''}"`,
+                        `"${lead.client_health || ''}"`,
+                        `"${lead.scope_pressure || ''}"`,
+                        `"${lead.active_client ? 'Yes' : 'No'}"`,
+                        `"${lead.source || ''}"`,
+                        `"${lead.created_at ? new Date(lead.created_at).toLocaleDateString() : ''}"`,
+                        `"${(lead.notes || '').replace(/"/g, '""')}"` // Escape quotes in notes
+                    ].join(','))
+                ];
+                
+                const csv = csvRows.join('\n');
                 
                 // Download
-                const blob = new Blob([csv], { type: 'text/csv' });
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `leads_tracker_${new Date().toISOString().split('T')[0]}.csv`;
+                a.download = `leads_export_${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(a);
                 a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
             } catch (error) {
-                console.error('Error:', error);
-                alert('Error exporting data');
+                console.error('Error exporting:', error);
+                alert('Error exporting data: ' + error.message);
             }
         }
 
@@ -1321,42 +1405,30 @@
         function showEditLeadModal(lead) {
             const modal = document.getElementById('editLeadModal');
             
-            // Debug: Log the lead data
             console.log('Opening lead for editing:', lead);
             
-            // Populate form fields
+            // Populate all fields
             document.getElementById('editLeadId').value = lead.id;
             document.getElementById('editFullName').value = lead.full_name || '';
             document.getElementById('editTitle').value = lead.title || '';
             document.getElementById('editEmail').value = lead.email || '';
             document.getElementById('editPhone').value = lead.phone || '';
             document.getElementById('editLinkedin').value = lead.linkedin_url || '';
+            document.getElementById('editCompanyName').value = lead.company_name || '';
+            document.getElementById('editCompanyDomain').value = lead.company_domain || '';
+            document.getElementById('editCompanyIndustry').value = lead.company_industry || '';
+            document.getElementById('editCompanyLocation').value = lead.company_location || '';
             document.getElementById('editCompanySize').value = lead.company_size || '';
-            document.getElementById('editStatus').value = lead.status || 'Identified';
-            document.getElementById('editLastTouchDate').value = lead.last_touch_date ? lead.last_touch_date.split('T')[0] : '';
-            document.getElementById('editTier').value = lead.tier || '';
-            document.getElementById('editDealType').value = lead.deal_type || '';
-            document.getElementById('editNextAction').value = lead.next_action || '';
-            document.getElementById('editNextActionDate').value = lead.next_action_date ? lead.next_action_date.split('T')[0] : '';
-            document.getElementById('editEstValue').value = lead.estimated_monthly_value || '';
-            document.getElementById('editCloseProb').value = lead.close_probability || '';
+            document.getElementById('editStatus').value = lead.status || 'new';
+            document.getElementById('editStartDate').value = lead.start_date || '';
+            document.getElementById('editDecisionMaker').value = lead.decision_maker !== null ? String(lead.decision_maker) : '';
+            document.getElementById('editClientHealth').value = lead.client_health || '';
+            document.getElementById('editScopePressure').value = lead.scope_pressure || '';
             document.getElementById('editActiveClient').checked = lead.active_client || false;
             document.getElementById('editNotes').value = lead.notes || '';
             
-            // New fields
-            document.getElementById('editStartDate').value = lead.start_date ? lead.start_date.split('T')[0] : '';
-            document.getElementById('editClientHealth').value = lead.client_health || '';
-            document.getElementById('editScopePressure').value = lead.scope_pressure || '';
-            document.getElementById('editDecisionMaker').value = lead.decision_maker !== null ? String(lead.decision_maker) : '';
-            
             // Set modal title
-            document.getElementById('editModalTitle').textContent = `Edit: ${lead.full_name || 'Lead'} - ${lead.company_name || 'Company'}`;
-            
-            // Show scores
-            document.getElementById('editLeadScore').textContent = lead.lead_score.toFixed(1);
-            document.getElementById('editCompanyScore').textContent = lead.company_fit_score.toFixed(1);
-            document.getElementById('editRoleScore').textContent = lead.role_relevance_score.toFixed(1);
-            document.getElementById('editIntentScore').textContent = lead.intent_score.toFixed(1);
+            document.getElementById('editModalTitle').textContent = `Edit: ${lead.full_name || lead.email || 'Lead'}`;
             
             // Load note history
             loadNoteHistory(lead);
@@ -1487,71 +1559,34 @@
             submitBtn.textContent = '⏳ Adding Lead...';
             
             try {
-                // Step 1: Create or find company
-                const companyData = {
-                    name: document.getElementById('companyName').value,
-                    domain: document.getElementById('companyDomain').value || null,
-                    industry: document.getElementById('companyIndustry').value || null,
-                    location: document.getElementById('companyLocation').value || null,
-                    employee_count: null  // We'll use company_size on the lead instead
-                };
-                
-                const companyParams = new URLSearchParams();
-                companyParams.append('name', companyData.name);
-                if (companyData.domain) companyParams.append('domain', companyData.domain);
-                if (companyData.industry) companyParams.append('industry', companyData.industry);
-                if (companyData.location) companyParams.append('location', companyData.location);
-                
-                const companyResponse = await fetch(`${API_BASE}/companies?${companyParams}`, {
-                    method: 'POST'
-                });
-                
-                if (!companyResponse.ok) {
-                    throw new Error('Failed to create/find company');
-                }
-                
-                const companyResult = await companyResponse.json();
-                const companyId = companyResult.id;
-                
-                // Step 2: Create lead with automatic scoring
+                // Create lead directly in Supabase
                 const leadData = {
-                    company_id: companyId,
                     full_name: document.getElementById('leadName').value || null,
                     title: document.getElementById('leadTitle').value || null,
                     email: document.getElementById('leadEmail').value || null,
                     phone: document.getElementById('leadPhone').value || null,
-                    linkedin_url: document.getElementById('leadLinkedin').value || null,
+                    company_name: document.getElementById('companyName').value || null,
+                    company_domain: document.getElementById('companyDomain').value || null,
+                    company_industry: document.getElementById('companyIndustry').value || null,
+                    company_location: document.getElementById('companyLocation').value || null,
                     company_size: document.getElementById('companySize').value || null,
-                    status: document.getElementById('leadStatus').value,
-                    notes: document.getElementById('leadNotes').value || null,
+                    linkedin_url: document.getElementById('leadLinkedin').value || null,
                     start_date: document.getElementById('leadStartDate').value || null,
+                    decision_maker: document.getElementById('leadDecisionMaker').value ? (document.getElementById('leadDecisionMaker').value === 'true') : null,
                     client_health: document.getElementById('leadClientHealth').value || null,
                     scope_pressure: document.getElementById('leadScopePressure').value || null,
-                    decision_maker: document.getElementById('leadDecisionMaker').value || null
+                    status: document.getElementById('leadStatus').value || 'Identified',
+                    notes: document.getElementById('leadNotes').value || null,
+                    source: 'manual',
+                    source_page: 'leads_dashboard'
                 };
                 
-                const leadParams = new URLSearchParams();
-                leadParams.append('company_id', leadData.company_id);
-                if (leadData.full_name) leadParams.append('full_name', leadData.full_name);
-                if (leadData.title) leadParams.append('title', leadData.title);
-                if (leadData.email) leadParams.append('email', leadData.email);
-                if (leadData.phone) leadParams.append('phone', leadData.phone);
-                if (leadData.linkedin_url) leadParams.append('linkedin_url', leadData.linkedin_url);
-                if (leadData.company_size) leadParams.append('company_size', leadData.company_size);
-                leadParams.append('status', leadData.status);
-                if (leadData.notes) leadParams.append('notes', leadData.notes);
-                if (leadData.start_date) leadParams.append('start_date', leadData.start_date);
-                if (leadData.client_health) leadParams.append('client_health', leadData.client_health);
-                if (leadData.scope_pressure) leadParams.append('scope_pressure', leadData.scope_pressure);
-                if (leadData.decision_maker) leadParams.append('decision_maker', leadData.decision_maker);
+                const { data, error } = await supabaseClient
+                    .from('leads')
+                    .insert([leadData])
+                    .select();
                 
-                const leadResponse = await fetch(`${API_BASE}/leads?${leadParams}`, {
-                    method: 'POST'
-                });
-                
-                if (!leadResponse.ok) {
-                    throw new Error('Failed to create lead');
-                }
+                if (error) throw error;
                 
                 const result = await leadResponse.json();
                 
@@ -1595,35 +1630,28 @@
                     title: document.getElementById('editTitle').value || null,
                     email: document.getElementById('editEmail').value || null,
                     phone: document.getElementById('editPhone').value || null,
-                    last_touch_date: document.getElementById('editLastTouchDate').value || null,
-                    deal_type: document.getElementById('editDealType').value || null,
                     linkedin_url: document.getElementById('editLinkedin').value || null,
+                    company_name: document.getElementById('editCompanyName').value || null,
+                    company_domain: document.getElementById('editCompanyDomain').value || null,
+                    company_industry: document.getElementById('editCompanyIndustry').value || null,
+                    company_location: document.getElementById('editCompanyLocation').value || null,
                     company_size: document.getElementById('editCompanySize').value || null,
                     status: document.getElementById('editStatus').value,
-                    tier: document.getElementById('editTier').value || null,
-                    next_action: document.getElementById('editNextAction').value || null,
-                    next_action_date: document.getElementById('editNextActionDate').value || null,
-                    estimated_monthly_value: parseFloat(document.getElementById('editEstValue').value) || null,
-                    close_probability: parseFloat(document.getElementById('editCloseProb').value) || null,
-                    active_client: document.getElementById('editActiveClient').checked,
-                    notes: document.getElementById('editNotes').value || null,
                     start_date: document.getElementById('editStartDate').value || null,
+                    decision_maker: document.getElementById('editDecisionMaker').value ? (document.getElementById('editDecisionMaker').value === 'true') : null,
                     client_health: document.getElementById('editClientHealth').value || null,
                     scope_pressure: document.getElementById('editScopePressure').value || null,
-                    decision_maker: document.getElementById('editDecisionMaker').value ? (document.getElementById('editDecisionMaker').value === 'true') : null
+                    active_client: document.getElementById('editActiveClient').checked,
+                    notes: document.getElementById('editNotes').value || null
                 };
                 
-                const response = await fetch(`${API_BASE}/leads/${leadId}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(updateData)
-                });
+                const { data, error } = await supabaseClient
+                    .from('leads')
+                    .update(updateData)
+                    .eq('id', leadId)
+                    .select();
                 
-                if (!response.ok) {
-                    throw new Error('Failed to update lead');
-                }
+                if (error) throw error;
                 
                 // Show success feedback
                 submitBtn.textContent = 'Saved!';
@@ -1678,17 +1706,13 @@
             
             // Save to database
             try {
-                const response = await fetch(`${API_BASE}/leads/${leadId}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ notes: updatedNotes })
-                });
+                const { data, error } = await supabaseClient
+                    .from('leads')
+                    .update({ notes: updatedNotes })
+                    .eq('id', leadId)
+                    .select();
                 
-                if (!response.ok) {
-                    throw new Error('Failed to save note');
-                }
+                if (error) throw error;
                 
                 // Refresh note history
                 const lead = allLeads.find(l => l.id == leadId);
@@ -1756,17 +1780,13 @@
 
             // Save to database
             try {
-                const response = await fetch(`${API_BASE}/leads/${leadId}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ notes: updatedNotes })
-                });
+                const { data, error } = await supabaseClient
+                    .from('leads')
+                    .update({ notes: updatedNotes })
+                    .eq('id', leadId)
+                    .select();
 
-                if (!response.ok) {
-                    throw new Error('Failed to update note');
-                }
+                if (error) throw error;
 
                 // Update local data and refresh
                 lead.notes = updatedNotes;
@@ -1801,17 +1821,13 @@
 
             // Save to database
             try {
-                const response = await fetch(`${API_BASE}/leads/${leadId}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ notes: updatedNotes })
-                });
+                const { data, error } = await supabaseClient
+                    .from('leads')
+                    .update({ notes: updatedNotes })
+                    .eq('id', leadId)
+                    .select();
 
-                if (!response.ok) {
-                    throw new Error('Failed to delete note');
-                }
+                if (error) throw error;
 
                 // Update local data and refresh
                 lead.notes = updatedNotes;
@@ -2020,29 +2036,6 @@
 
                     <!-- Details Tab -->
                     <div class="tab-content active" id="detailsContent">
-                        <!-- Lead Scores -->
-                        <div style="background: #f9fafb; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                            <div style="font-weight: 600; margin-bottom: 0.75rem; color: #374151;">AI Lead Scores</div>
-                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
-                                <div>
-                                    <div style="font-size: 0.75rem; color: #6b7280;">Overall Score</div>
-                                    <div style="font-size: 1.5rem; font-weight: 700; color: #3B5BDB;"><span id="editLeadScore">-</span>/100</div>
-                                </div>
-                                <div>
-                                    <div style="font-size: 0.75rem; color: #6b7280;">Company Fit</div>
-                                    <div style="font-size: 1.25rem; font-weight: 600; color: #374151;"><span id="editCompanyScore">-</span>/100</div>
-                                </div>
-                                <div>
-                                    <div style="font-size: 0.75rem; color: #6b7280;">Role Relevance</div>
-                                    <div style="font-size: 1.25rem; font-weight: 600; color: #374151;"><span id="editRoleScore">-</span>/100</div>
-                                </div>
-                                <div>
-                                    <div style="font-size: 0.75rem; color: #6b7280;">Intent</div>
-                                    <div style="font-size: 1.25rem; font-weight: 600; color: #374151;"><span id="editIntentScore">-</span>/100</div>
-                                </div>
-                            </div>
-                        </div>
-
                         <!--Contact Information -->
                         <div class="form-section-title">Contact Information</div>
                         
@@ -2070,6 +2063,30 @@
                         <div class="form-group">
                             <label class="form-label">LinkedIn URL</label>
                             <input type="url" id="editLinkedin" class="form-input">
+                        </div>
+
+                        <!--Company Information -->
+                        <div class="form-section-title">Company Information</div>
+
+                        <div class="form-group">
+                            <label class="form-label">Company Name</label>
+                            <input type="text" id="editCompanyName" class="form-input">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Domain</label>
+                                <input type="text" id="editCompanyDomain" class="form-input" placeholder="e.g., acme.com">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Industry</label>
+                                <input type="text" id="editCompanyIndustry" class="form-input" placeholder="e.g., Technology">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Location</label>
+                            <input type="text" id="editCompanyLocation" class="form-input" placeholder="e.g., San Francisco, CA">
                         </div>
 
                         <!--Status & Tracking -->
@@ -2249,14 +2266,8 @@
         </div>
     </div>
 
-    <script src="js/supabase.js"></script>
     <script>
-        // Check authentication
-        const SUPABASE_URL = 'https://clpcskkoguomoihnisai.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNscGNza2tvZ3VvbW9paG5pc2FpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUyMjYyMTIsImV4cCI6MjA3MDgwMjIxMn0.TpZQuKm0cVvl7lJbXt2Iw1_s3HlLLIIbRr7lIOyVsBo';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        // Check if user is logged in
+        // Check authentication (uses supabaseClient from supabase-config.js)
         supabaseClient.auth.getSession().then(({ data: { session } }) => {
             if (!session) {
                 // Redirect to employee portal login

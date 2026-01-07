@@ -591,6 +591,53 @@ a {
     animation: fadeInUp 0.8s ease-out 0.5s forwards;
 }
 
+/* Hero Form Styles */
+.hero-form {
+    max-width: 600px;
+    margin: 2.5rem auto 0 auto;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.8s ease-out 0.9s forwards;
+}
+
+.hero-form form {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.hero-form input[type="email"] {
+    flex: 1;
+    max-width: 350px;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    border: 2px solid #E5E7EB;
+    border-radius: 8px;
+    background: white;
+    color: #1f2937;
+    transition: all 0.3s ease;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.hero-form input[type="email"]::placeholder {
+    color: #9CA3AF;
+}
+
+.hero-form input[type="email"]:focus {
+    outline: none;
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.hero-form button {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    white-space: nowrap;
+    border-radius: 8px;
+}
+
 .hero-stats {
     display: flex;
     gap: 3rem;
@@ -2054,10 +2101,66 @@ a {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
+#email-form-wrapper,
+#calendly-widget-wrapper {
+    transition: opacity 0.3s ease;
+}
+
+.calendly-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.calendly-header h3 {
+    color: #1a1a1a;
+    margin-bottom: 0.5rem;
+}
+
+.calendly-header .form-subtitle {
+    color: #666;
+    font-size: 0.95rem;
+}
+
 .contact-form h3 {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 0.5rem;
     color: #1a1a1a;
+}
+
+.contact-form .form-subtitle {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.trust-signals {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #eee;
+    gap: 1rem;
+}
+
+.trust-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+    flex: 1;
+}
+
+.trust-item i {
+    color: #667eea;
+    font-size: 1.5rem;
+}
+
+.trust-item span {
+    font-size: 0.875rem;
+    color: #666;
 }
 
 .form-row {

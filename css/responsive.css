@@ -272,6 +272,26 @@
         margin-bottom: 1.5rem;
     }
     
+    /* Hero Form - Mobile */
+    .hero-form {
+        margin-bottom: 2rem;
+        padding: 0 1rem;
+    }
+    
+    .hero-form form {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .hero-form input[type="email"] {
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    .hero-form button {
+        width: 100%;
+    }
+    
     /* Hero Icons - Mobile Size */
     .hero-icon, .service-hero .hero-icon {
         width: 180px;
@@ -460,6 +480,17 @@
     
     .contact-form-container {
         padding: 2rem;
+    }
+    
+    .trust-signals {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .trust-item {
+        flex-direction: row;
+        justify-content: center;
+        gap: 1rem;
     }
     
     .form-row {

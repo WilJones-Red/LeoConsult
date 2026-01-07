@@ -5,40 +5,141 @@
 document.addEventListener('DOMContentLoaded', function() {
     
     // ========================================
-    // CONTACT FORM HANDLING
+    // CONTACT FORM HANDLING (Hero + Contact Section)
     // ========================================
     
     const contactForm = document.getElementById('contact-form');
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            // Don't prevent default - let it submit to Formspree
-            
-            // Validate form
-            if (!validateForm(this)) {
-                e.preventDefault(); // Only prevent if validation fails
-                showFormMessage(this, 'Please fill in all required fields correctly.', 'error');
-                return;
-            }
-            
-            // Show loading state
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalBtnText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-            submitBtn.disabled = true;
-            submitBtn.classList.add('loading');
-            
-            // Track conversion event
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData);
-            
-            trackEvent('contact_form_submission', {
-                service: data.service,
-                company: data.company
-            });
-            
-            // Form will now submit naturally to Formspree
-            // window.location.href = '/thank-you.html';
+    const heroContactForm = document.getElementById('hero-contact-form');
+    
+    // Function to handle form submission
+    const handleContactFormSubmit = function(e) {
+        e.preventDefault();
+        
+        // Validate email
+        const emailInput = this.querySelector('input[type="email"]');
+        const email = emailInput.value.trim();
+        
+        if (!validateEmail(email)) {
+            showFormMessage(this, 'Please enter a valid email address.', 'error');
+            return;
+        }
+        
+        // Show loading state
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+        submitBtn.disabled = true;
+        submitBtn.classList.add('loading');
+        
+        // Track conversion event
+        trackEvent('contact_form_submission', {
+            email: email,
+            source: 'calendly_flow'
         });
+        
+        const formElement = this;
+        
+        // Save to Supabase first
+        (async () => {
+            try {
+                // Save lead to Supabase
+                const { data: leadData, error: supabaseError } = await supabaseClient
+                    .from('leads')
+                    .upsert({
+                        email: email,
+                        source: 'website',
+                        source_page: window.location.pathname,
+                        status: 'new',
+                        created_at: new Date().toISOString()
+                    }, {
+                            onConflict: 'email',
+                            ignoreDuplicates: false
+                        });
+                    
+                    if (supabaseError) {
+                        console.error('Supabase error:', supabaseError);
+                        // Continue anyway - don't block user from booking
+                    }
+                    
+                    // Submit to Formspree (backup) - only for contact section form
+                    if (formElement.id === 'contact-form') {
+                        const formData = new FormData(formElement);
+                        await fetch('https://formspree.io/f/xblkqjlp', {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        }).catch(err => console.error('Formspree error:', err));
+                    }
+                    
+                    // Store email for analytics
+                    sessionStorage.setItem('userEmail', email);
+                    
+                    // Navigate to contact section with Calendly
+                    const contactSection = document.getElementById('contact');
+                    if (contactSection) {
+                        // Scroll to contact section
+                        contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        
+                        // After scroll, show Calendly widget
+                        setTimeout(() => {
+                            const emailWrapper = document.getElementById('email-form-wrapper');
+                            const calendlyWrapper = document.getElementById('calendly-widget-wrapper');
+                            
+                            if (emailWrapper && calendlyWrapper) {
+                                const calendlyDiv = calendlyWrapper.querySelector('.calendly-inline-widget');
+                                
+                                // Set the URL with email prefilled
+                                const calendlyUrl = `https://calendly.com/official-wilkinjones/30min?email=${encodeURIComponent(email)}`;
+                                calendlyDiv.setAttribute('data-url', calendlyUrl);
+                                
+                                // Smooth transition
+                                emailWrapper.style.opacity = '0';
+                                setTimeout(() => {
+                                    emailWrapper.style.display = 'none';
+                                    calendlyWrapper.style.display = 'block';
+                                    calendlyWrapper.style.opacity = '0';
+                                    setTimeout(() => {
+                                        calendlyWrapper.style.opacity = '1';
+                                        
+                                        // Reset button state
+                                        submitBtn.innerHTML = originalBtnText;
+                                        submitBtn.disabled = false;
+                                        submitBtn.classList.remove('loading');
+                                    }, 50);
+                                }, 300);
+                            } else {
+                                // If elements not found, just reset button
+                                submitBtn.innerHTML = originalBtnText;
+                                submitBtn.disabled = false;
+                                submitBtn.classList.remove('loading');
+                            }
+                        }, 500);
+                    } else {
+                        // If contact section not found, reset button
+                        submitBtn.innerHTML = originalBtnText;
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('loading');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    showFormMessage(formElement, 'Something went wrong. Please try again.', 'error');
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('loading');
+                }
+            })();
+        };
+    
+    // Attach to both forms
+    if (contactForm) {
+        contactForm.addEventListener('submit', handleContactFormSubmit);
+    }
+    
+    if (heroContactForm) {
+        heroContactForm.addEventListener('submit', handleContactFormSubmit);
     }
     
     // ========================================
