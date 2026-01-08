@@ -653,9 +653,27 @@
                     return;
                 }
 
+                // Check if user has employee access (employee, staff, admin, or super_admin)
+                const rank = data.user?.user_metadata?.rank;
+                const allowedRanks = ['employee', 'staff', 'admin', 'super_admin'];
+                
+                if (!rank || !allowedRanks.includes(rank)) {
+                    errorEl.textContent = 'Access denied. Employee access required.';
+                    await supabaseClient.auth.signOut();
+                    return;
+                }
+
                 // Success - show employee portal
                 document.getElementById('auth-container').style.display = 'none';
                 document.getElementById('employee-container').style.display = 'block';
+                
+                // Hide admin section if user is not admin or super_admin
+                if (rank !== 'admin' && rank !== 'super_admin') {
+                    const adminNavLink = document.querySelector('[onclick*="admin"]');
+                    const adminSection = document.getElementById('admin');
+                    if (adminNavLink) adminNavLink.style.display = 'none';
+                    if (adminSection) adminSection.style.display = 'none';
+                }
             } catch (err) {
                 errorEl.textContent = 'Login failed. Please try again.';
                 console.error('Login error:', err);
