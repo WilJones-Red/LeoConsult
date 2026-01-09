@@ -103,9 +103,11 @@ function showAdminPanel() {
     document.getElementById('access-denied').style.display = 'none';
     document.getElementById('admin-container').style.display = 'block';
     
-    // Load welcome message
+    // Load welcome message and store current user email and rank
     supabaseClient.auth.getSession().then(async ({ data: { session } }) => {
         if (session) {
+            currentLoggedInEmail = session.user.email;
+            currentLoggedInRank = session.user.user_metadata?.rank;
             await loadWelcomeMessage(session.user.email);
         }
     });
@@ -155,19 +157,16 @@ supabaseClient.auth.getSession().then(({ data: { session } }) => {
 });
 
 supabaseClient.auth.onAuthStateChange((event, session) => {
-    if (session) {
-        if (isAuthorizedAdmin(session.user)) {
-            showAdminPanel();
-            loadAllData();
-        } else {
-            console.warn('Unauthorized access attempt:', session.user.email);
-            supabaseClient.auth.signOut();
-        }
-    } else {
+    console.log('onAuthStateChange triggered:', event, session?.user?.email);
+    
+    // Only handle state changes if not coming from a login attempt
+    // (login function handles authorization itself)
+    if (event === 'SIGNED_OUT') {
         document.getElementById('auth-container').style.display = 'block';
         document.getElementById('admin-container').style.display = 'none';
         document.getElementById('access-denied').style.display = 'none';
     }
+    // Don't auto-show admin panel on SIGNED_IN - let login() handle it
 });
 
 // Tab Management
@@ -485,13 +484,42 @@ function formatRank(rank) {
 }
 
 let currentEditingUser = { id: null, email: null, firstName: null, lastName: null, currentRank: null };
+let currentLoggedInEmail = null;
+let currentLoggedInRank = null;
 
 function editUser(userId, email, firstName, lastName, currentRank) {
+    // Prevent users from editing themselves
+    if (email === currentLoggedInEmail) {
+        alert('⚠️ You cannot edit your own account. Please ask another administrator for assistance.');
+        return;
+    }
+    
+    // Only super_admin can edit admin or super_admin accounts
+    if ((currentRank === 'admin' || currentRank === 'super_admin') && currentLoggedInRank !== 'super_admin') {
+        alert('⚠️ Only Super Administrators can edit other administrator accounts.');
+        return;
+    }
+    
     currentEditingUser = { id: userId, email, firstName, lastName, currentRank };
     document.getElementById('edit-rank-email').textContent = email;
     document.getElementById('edit-user-first-name').value = firstName || '';
     document.getElementById('edit-user-last-name').value = lastName || '';
     document.getElementById('edit-rank-select').value = currentRank;
+    
+    // Restrict rank options for non-super_admin users
+    const rankSelect = document.getElementById('edit-rank-select');
+    const options = rankSelect.querySelectorAll('option');
+    options.forEach(option => {
+        // Only super_admin can assign admin or super_admin roles
+        if ((option.value === 'admin' || option.value === 'super_admin') && currentLoggedInRank !== 'super_admin') {
+            option.disabled = true;
+            option.style.display = 'none';
+        } else {
+            option.disabled = false;
+            option.style.display = '';
+        }
+    });
+    
     document.getElementById('edit-rank-modal').style.display = 'flex';
 }
 
@@ -506,6 +534,8 @@ async function saveUserChanges() {
     const newRank = document.getElementById('edit-rank-select').value;
     const { id, email, firstName, lastName, currentRank } = currentEditingUser;
     
+    console.log('saveUserChanges called:', { email, currentRank, newRank, id });
+    
     if (!newFirstName || !newLastName) {
         alert('First name and last name are required');
         return;
@@ -516,6 +546,7 @@ async function saveUserChanges() {
     saveBtn.textContent = 'Saving...';
 
     try {
+        console.log('Updating employees table...');
         // Update in employees table
         const { error: employeeError } = await supabaseClient
             .from('employees')
@@ -526,13 +557,20 @@ async function saveUserChanges() {
             })
             .eq('id', id);
 
-        if (employeeError) throw employeeError;
+        if (employeeError) {
+            console.error('Employee table update error:', employeeError);
+            throw employeeError;
+        }
+        
+        console.log('Employees table updated successfully');
 
         // Also update rank in auth metadata if changed
+        console.log(`Checking if rank changed: ${currentRank} -> ${newRank}`, currentRank !== newRank);
         if (newRank !== currentRank) {
             const { data: { session } } = await supabaseClient.auth.getSession();
             
             if (session) {
+                console.log(`Updating metadata for ${email} from ${currentRank} to ${newRank}`);
                 const response = await fetch(`${SUPABASE_URL}/functions/v1/update-user-rank`, {
                     method: 'POST',
                     headers: {
@@ -543,15 +581,19 @@ async function saveUserChanges() {
                     body: JSON.stringify({ email, rank: newRank })
                 });
 
+                const result = await response.json();
+                console.log('Edge Function response:', { ok: response.ok, status: response.status, result });
+                
                 if (!response.ok) {
-                    const result = await response.json();
-                    console.warn('Failed to update auth metadata:', result.error);
-                    // Continue anyway since employees table is updated
+                    console.error('Failed to update auth metadata:', result);
+                    alert(`⚠️ Warning: User role updated in database, but failed to update authentication metadata. The user may need to log out and log back in for changes to take full effect.\n\nError: ${result.error || 'Unknown error'}`);
+                } else {
+                    console.log('Metadata updated successfully:', result);
                 }
             }
         }
 
-        alert(`✅ User updated successfully!`);
+        alert(`✅ User updated successfully!${newRank !== currentRank ? '\n\nNote: The user must log out and log back in for role changes to take effect.' : ''}`);
         closeEditRankModal();
         loadUsers(); // Refresh the list
 
@@ -707,6 +749,7 @@ async function saveUser() {
 function loadAllData() {
     loadAnalytics();
     loadFAQs();
+    loadUsers();
 }
 
 // Auto-refresh analytics every 30 seconds

@@ -44,11 +44,11 @@ serve(async (req) => {
       )
     }
 
-    // Check if requesting user is a super_admin
+    // Check if requesting user is an admin or super_admin
     const requestingUserRank = user.user_metadata?.rank
-    if (requestingUserRank !== 'super_admin') {
+    if (requestingUserRank !== 'super_admin' && requestingUserRank !== 'admin') {
       return new Response(
-        JSON.stringify({ error: 'Only super administrators can manage user ranks' }),
+        JSON.stringify({ error: 'Only administrators can manage user ranks' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
