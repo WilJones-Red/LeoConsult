@@ -134,27 +134,30 @@ async function loadWelcomeMessage(email) {
 }
 
 // Check if user is already logged in and authorized
-console.log('Checking for existing session...');
-supabaseClient.auth.getSession().then(({ data: { session } }) => {
-    console.log('Session check result:', session);
-    if (session) {
-        console.log('Session found, checking authorization for:', session.user.email);
-        if (isAuthorizedAdmin(session.user)) {
-            console.log('User is authorized, showing admin panel');
-            showAdminPanel();
-            loadAllData();
+// ONLY run this check if we're on the admin page
+if (window.location.pathname.includes('admin.html')) {
+    console.log('Checking for existing session...');
+    supabaseClient.auth.getSession().then(({ data: { session } }) => {
+        console.log('Session check result:', session);
+        if (session) {
+            console.log('Session found, checking authorization for:', session.user.email);
+            if (isAuthorizedAdmin(session.user)) {
+                console.log('User is authorized, showing admin panel');
+                showAdminPanel();
+                loadAllData();
+            } else {
+                console.warn('Unauthorized session detected for:', session.user.email);
+                // Don't sign out - just show access denied
+                document.getElementById('access-denied').style.display = 'block';
+                document.getElementById('auth-container').style.display = 'none';
+            }
         } else {
-            console.warn('Unauthorized session detected for:', session.user.email);
-            supabaseClient.auth.signOut();
-            document.getElementById('access-denied').style.display = 'block';
-            document.getElementById('auth-container').style.display = 'none';
+            console.log('No existing session found');
         }
-    } else {
-        console.log('No existing session found');
-    }
-}).catch(err => {
-    console.error('Error getting session:', err);
-});
+    }).catch(err => {
+        console.error('Error getting session:', err);
+    });
+}
 
 supabaseClient.auth.onAuthStateChange((event, session) => {
     console.log('onAuthStateChange triggered:', event, session?.user?.email);
