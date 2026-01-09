@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title>Admin Panel | Leo Consult</title>
     <link rel="icon" type="image/png" href="assets/logo.png">
     <style>
@@ -167,6 +168,18 @@
             display: flex;
             gap: 15px;
             align-items: center;
+        }
+
+        .welcome-message {
+            margin-right: 20px;
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .welcome-message .user-name {
+            color: #3B5BDB;
+            font-weight: 600;
         }
 
         .nav-link {
@@ -481,6 +494,7 @@
                     <span class="brand-name">Admin Panel</span>
                 </div>
                 <div class="nav-links">
+                    <span class="welcome-message" id="welcomeMessage" style="display: none;">Welcome back, <span class="user-name" id="userName"></span></span>
                     <a href="employee.html" style="text-decoration: none;">
                         <button class="nav-link">Resources</button>
                     </a>
@@ -583,6 +597,8 @@
                     <table>
                         <thead>
                             <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
                                 <th>Email</th>
                                 <th>Role</th>
                                 <th>Added Date</th>
@@ -637,6 +653,7 @@
                 <label>Role</label>
                 <select id="user-role" style="width: 100%; padding: 10px; border: 1px solid #e0e0e0; border-radius: 6px;">
                     <option value="employee">Employee</option>
+                    <option value="sales">Sales</option>
                     <option value="staff">Staff</option>
                     <option value="admin">Administrator</option>
                     <option value="super_admin">Super Administrator</option>
@@ -645,6 +662,36 @@
             <div style="display: flex; gap: 10px;">
                 <button class="btn btn-primary" onclick="saveUser()">Add Administrator</button>
                 <button class="btn" onclick="closeUserModal()" style="background: #ccc;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="edit-rank-modal" class="modal">
+        <div class="modal-content">
+            <h2>Edit User</h2>
+            <p style="color: #666; margin-bottom: 20px; font-size: 14px;">Update information for <strong id="edit-rank-email"></strong></p>
+            <div class="form-group">
+                <label>First Name</label>
+                <input type="text" id="edit-user-first-name" placeholder="John" style="width: 100%; padding: 10px; border: 1px solid #e0e0e0; border-radius: 6px;">
+            </div>
+            <div class="form-group">
+                <label>Last Name</label>
+                <input type="text" id="edit-user-last-name" placeholder="Doe" style="width: 100%; padding: 10px; border: 1px solid #e0e0e0; border-radius: 6px;">
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <select id="edit-rank-select" style="width: 100%; padding: 10px; border: 1px solid #e0e0e0; border-radius: 6px;">
+                    <option value="employee">Employee</option>
+                    <option value="sales">Sales</option>
+                    <option value="staff">Staff</option>
+                    <option value="admin">Administrator</option>
+                    <option value="super_admin">Super Administrator</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-primary" onclick="saveUserChanges()">Save Changes</button>
+                <button class="btn" onclick="closeEditRankModal()" style="background: #ccc;">Cancel</button>
             </div>
         </div>
     </div>

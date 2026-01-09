@@ -102,6 +102,33 @@ function showAdminPanel() {
     document.getElementById('auth-container').style.display = 'none';
     document.getElementById('access-denied').style.display = 'none';
     document.getElementById('admin-container').style.display = 'block';
+    
+    // Load welcome message
+    supabaseClient.auth.getSession().then(async ({ data: { session } }) => {
+        if (session) {
+            await loadWelcomeMessage(session.user.email);
+        }
+    });
+}
+
+// Load welcome message with user's first name
+async function loadWelcomeMessage(email) {
+    try {
+        const { data, error } = await supabaseClient
+            .from('employees')
+            .select('first_name')
+            .eq('email', email)
+            .single();
+
+        if (error) throw error;
+
+        if (data && data.first_name) {
+            document.getElementById('userName').textContent = data.first_name;
+            document.getElementById('welcomeMessage').style.display = 'inline';
+        }
+    } catch (error) {
+        console.error('Error loading user name:', error);
+    }
 }
 
 // Check if user is already logged in and authorized
@@ -382,6 +409,236 @@ async function retrainModel() {
 }
 
 // User Management Functions
+async function loadUsers() {
+    try {
+        // Fetch from employees table
+        const { data: employees, error } = await supabaseClient
+            .from('employees')
+            .select('*')
+            .order('first_name');
+
+        if (error) {
+            throw new Error(error.message);
+        }
+
+        const tbody = document.getElementById('users-list');
+        
+        if (!tbody) {
+            console.error('users-list element not found');
+            return;
+        }
+
+        if (!employees || employees.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem; color: #666;">No users found. Add users to manage access.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = employees.map(user => {
+            const createdDate = user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A';
+            const isActive = user.is_active ? 'Active' : 'Inactive';
+            
+            return `
+                <tr>
+                    <td>${user.first_name || '-'}</td>
+                    <td>${user.last_name || '-'}</td>
+                    <td>${user.email}</td>
+                    <td><span style="padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; background: ${getRankColor(user.role)}; color: white;">${formatRank(user.role)}</span></td>
+                    <td>${createdDate}</td>
+                    <td><span style="padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; background: ${isActive === 'Active' ? '#10b981' : '#f59e0b'}; color: white;">${isActive}</span></td>
+                    <td>
+                        <button class="btn btn-primary" onclick="editUser('${user.id}', '${user.email}', '${user.first_name || ''}', '${user.last_name || ''}', '${user.role}')" style="font-size: 0.75rem; padding: 0.375rem 0.75rem;">Edit User</button>
+                        ${user.role !== 'super_admin' ? `<button class="btn btn-danger" onclick="removeUser('${user.id}', '${user.email}')" style="font-size: 0.75rem; padding: 0.375rem 0.75rem; margin-left: 0.5rem;">Remove</button>` : ''}
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+    } catch (error) {
+        console.error('Error loading users:', error);
+        const tbody = document.getElementById('users-list');
+        if (tbody) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 2rem; color: #ef4444;">Error loading users: ${error.message}</td></tr>`;
+        }
+    }
+}
+
+function getRankColor(rank) {
+    const colors = {
+        'super_admin': '#7c3aed',
+        'admin': '#3b82f6',
+        'sales': '#10b981',
+        'staff': '#f59e0b',
+        'employee': '#6b7280'
+    };
+    return colors[rank] || '#6b7280';
+}
+
+function formatRank(rank) {
+    const names = {
+        'super_admin': 'Super Admin',
+        'admin': 'Administrator',
+        'sales': 'Sales',
+        'staff': 'Staff',
+        'employee': 'Employee'
+    };
+    return names[rank] || rank;
+}
+
+let currentEditingUser = { id: null, email: null, firstName: null, lastName: null, currentRank: null };
+
+function editUser(userId, email, firstName, lastName, currentRank) {
+    currentEditingUser = { id: userId, email, firstName, lastName, currentRank };
+    document.getElementById('edit-rank-email').textContent = email;
+    document.getElementById('edit-user-first-name').value = firstName || '';
+    document.getElementById('edit-user-last-name').value = lastName || '';
+    document.getElementById('edit-rank-select').value = currentRank;
+    document.getElementById('edit-rank-modal').style.display = 'flex';
+}
+
+function closeEditRankModal() {
+    document.getElementById('edit-rank-modal').style.display = 'none';
+    currentEditingUser = { id: null, email: null, firstName: null, lastName: null, currentRank: null };
+}
+
+async function saveUserChanges() {
+    const newFirstName = document.getElementById('edit-user-first-name').value.trim();
+    const newLastName = document.getElementById('edit-user-last-name').value.trim();
+    const newRank = document.getElementById('edit-rank-select').value;
+    const { id, email, firstName, lastName, currentRank } = currentEditingUser;
+    
+    if (!newFirstName || !newLastName) {
+        alert('First name and last name are required');
+        return;
+    }
+
+    const saveBtn = event.target;
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving...';
+
+    try {
+        // Update in employees table
+        const { error: employeeError } = await supabaseClient
+            .from('employees')
+            .update({
+                first_name: newFirstName,
+                last_name: newLastName,
+                role: newRank
+            })
+            .eq('id', id);
+
+        if (employeeError) throw employeeError;
+
+        // Also update rank in auth metadata if changed
+        if (newRank !== currentRank) {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            
+            if (session) {
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/update-user-rank`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.access_token}`,
+                        'apikey': SUPABASE_ANON_KEY
+                    },
+                    body: JSON.stringify({ email, rank: newRank })
+                });
+
+                if (!response.ok) {
+                    const result = await response.json();
+                    console.warn('Failed to update auth metadata:', result.error);
+                    // Continue anyway since employees table is updated
+                }
+            }
+        }
+
+        alert(`✅ User updated successfully!`);
+        closeEditRankModal();
+        loadUsers(); // Refresh the list
+
+    } catch (error) {
+        alert('❌ Error: ' + error.message);
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Save Changes';
+    }
+}
+
+// Function to get all sales/employee users for assignment dropdowns
+async function getSalesAgents() {
+    try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        
+        if (!session) {
+            return [];
+        }
+
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/list-users`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${session.access_token}`,
+                'apikey': SUPABASE_ANON_KEY
+            }
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            console.error('Failed to load users:', result.error);
+            return [];
+        }
+
+        // Filter to only sales, employee, staff, and admin users
+        const agents = result.users.filter(u => {
+            const rank = u.user_metadata?.rank;
+            return rank === 'sales' || rank === 'employee' || rank === 'staff' || rank === 'admin';
+        });
+
+        return agents;
+
+    } catch (error) {
+        console.error('Error loading sales agents:', error);
+        return [];
+    }
+}
+
+async function removeUser(userId, email) {
+    if (!confirm(`Are you sure you want to remove ${email}?\n\nThis will revoke their access to the admin panel.`)) {
+        return;
+    }
+
+    try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        
+        if (!session) {
+            alert('You must be logged in to remove users');
+            return;
+        }
+
+        // For now, just set their rank to employee to revoke admin access
+        // In a production system, you might want a separate edge function to delete users
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/update-user-rank`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${session.access_token}`,
+                'apikey': SUPABASE_ANON_KEY
+            },
+            body: JSON.stringify({ email, rank: 'employee' })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || 'Failed to remove user');
+        }
+
+        alert(`✅ Access revoked for ${email}`);
+        loadUsers(); // Refresh the list
+
+    } catch (error) {
+        alert('❌ Error: ' + error.message);
+    }
+}
+
 function showAddUser() {
     document.getElementById('user-modal').style.display = 'flex';
     document.getElementById('user-email').value = '';

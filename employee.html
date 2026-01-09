@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title>Employee Portal | Leo Consult</title>
     <link rel="icon" type="image/png" href="assets/logo.png">
     <style>
@@ -137,6 +138,18 @@
             display: flex;
             gap: 15px;
             align-items: center;
+        }
+
+        .welcome-message {
+            margin-right: 20px;
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .welcome-message .user-name {
+            color: #3B5BDB;
+            font-weight: 600;
         }
 
         .nav-link {
@@ -504,6 +517,7 @@
                     <span class="brand-name">Employee Portal</span>
                 </div>
                 <div class="nav-links">
+                    <span class="welcome-message" id="welcomeMessage" style="display: none;">Welcome back, <span class="user-name" id="userName"></span></span>
                     <button class="nav-link active" onclick="showSection('resources')">Resources</button>
                     <a href="leads.html" style="text-decoration: none;">
                         <button class="nav-link">Leads</button>
@@ -667,6 +681,9 @@
                 document.getElementById('auth-container').style.display = 'none';
                 document.getElementById('employee-container').style.display = 'block';
                 
+                // Load welcome message
+                await loadWelcomeMessage(data.user.email);
+                
                 // Hide admin section if user is not admin or super_admin
                 if (rank !== 'admin' && rank !== 'super_admin') {
                     const adminNavLink = document.querySelector('[onclick*="admin"]');
@@ -677,6 +694,29 @@
             } catch (err) {
                 errorEl.textContent = 'Login failed. Please try again.';
                 console.error('Login error:', err);
+            }
+        }
+
+        // Load welcome message with user's first name
+        async function loadWelcomeMessage(email) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('employees')
+                    .select('first_name')
+                    .eq('email', email)
+                    .single();
+
+                if (error) {
+                    console.error('Error loading user name:', error);
+                    return;
+                }
+
+                if (data && data.first_name) {
+                    document.getElementById('userName').textContent = data.first_name;
+                    document.getElementById('welcomeMessage').style.display = 'inline';
+                }
+            } catch (error) {
+                console.error('Error loading user name:', error);
             }
         }
 
@@ -713,11 +753,21 @@
         }
 
         // Check if user is already logged in
-        supabaseClient.auth.onAuthStateChange((event, session) => {
+        supabaseClient.auth.getSession().then(async ({ data: { session } }) => {
             if (session) {
                 document.getElementById('auth-container').style.display = 'none';
                 document.getElementById('employee-container').style.display = 'block';
-            } else {
+                
+                // Load welcome message with a delay to ensure DOM is ready
+                setTimeout(() => {
+                    loadWelcomeMessage(session.user.email);
+                }, 500);
+            }
+        });
+
+        // Only handle logout state changes
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+            if (!session) {
                 document.getElementById('auth-container').style.display = 'block';
                 document.getElementById('employee-container').style.display = 'none';
             }

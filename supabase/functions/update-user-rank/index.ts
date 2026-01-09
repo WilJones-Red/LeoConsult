@@ -63,9 +63,10 @@ serve(async (req) => {
       )
     }
 
-    if (rank !== 'admin' && rank !== 'super_admin' && rank !== null) {
+    const validRanks = ['employee', 'sales', 'staff', 'admin', 'super_admin', null]
+    if (!validRanks.includes(rank)) {
       return new Response(
-        JSON.stringify({ error: 'Invalid rank. Must be "admin", "super_admin", or null' }),
+        JSON.stringify({ error: 'Invalid rank. Must be one of: employee, sales, staff, admin, super_admin, or null' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }

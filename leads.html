@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title>Lead Tracker | Leo Consult</title>
     <link rel="icon" type="image/x-icon" href="assets/favicon_io/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon_io/favicon-32x32.png">
@@ -60,6 +61,19 @@
         .nav-links {
             display: flex;
             gap: 15px;
+            align-items: center;
+        }
+
+        .welcome-message {
+            margin-right: 20px;
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .welcome-message .user-name {
+            color: #3B5BDB;
+            font-weight: 600;
         }
 
         .nav-link {
@@ -775,6 +789,7 @@
                 <span class="brand-name">Lead Management</span>
             </div>
             <div class="nav-links">
+                <span class="welcome-message" id="welcomeMessage" style="display: none;">Welcome back, <span class="user-name" id="userName"></span></span>
                 <a href="employee.html" style="text-decoration: none;">
                     <button class="nav-link">Resources</button>
                 </a>
@@ -964,6 +979,7 @@
                                 <th>Close %</th>
                                 <th>Next Action</th>
                                 <th>Due Date</th>
+                                <th>Assigned</th>
                             </tr>
                         </thead>
                         <tbody id="leads-tbody"></tbody>
@@ -1111,12 +1127,18 @@
         // Load KPIs - Using Supabase directly
         async function loadKPIs(timePeriod = currentTimePeriod) {
             try {
+                // Add a small delay to ensure auth is ready
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
                 // Get all leads from Supabase
                 const { data: leads, error } = await supabaseClient
                     .from('leads')
                     .select('*');
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Error loading KPIs:', error);
+                    return;
+                }
 
                 // Calculate KPIs from leads data
                 const totalConversations = leads.length;
@@ -1195,10 +1217,33 @@
             tableWrapper.style.display = 'none';
 
             try {
-                // Fetch from Supabase
-                const { data, error } = await supabaseClient
+                // Build query based on user role
+                let query = supabaseClient
                     .from('leads')
-                    .select('*')
+                    .select(`
+                        *,
+                        assigned_employee:employees!assigned_employee_id(
+                            id,
+                            first_name,
+                            last_name,
+                            email,
+                            role
+                        )
+                    `);
+
+                // Filter leads based on user role
+                if (currentUser) {
+                    const role = currentUser.role;
+                    
+                    // Sales users only see their assigned leads
+                    if (role === 'sales' || role === 'employee' || role === 'staff') {
+                        query = query.eq('assigned_employee_id', currentUser.id);
+                    }
+                    // Super admin and admin see all leads (no filter needed)
+                }
+
+                // Fetch from Supabase
+                const { data, error } = await query
                     .order('created_at', { ascending: false })
                     .limit(1000);
                 
@@ -1242,6 +1287,7 @@
                 const nextActionDate = lead.next_action_date ? new Date(lead.next_action_date).toLocaleDateString() : '-';
                 const estimatedValue = lead.estimated_monthly_value ? `$${lead.estimated_monthly_value.toLocaleString()}` : '-';
                 const closeProb = lead.close_probability ? `${lead.close_probability}%` : '-';
+                const assignedAgent = lead.assigned_employee ? `${lead.assigned_employee.first_name} ${lead.assigned_employee.last_name}` : '-';
 
                 return `
                     <tr onclick="viewLeadDetails(${lead.id})">
@@ -1253,6 +1299,7 @@
                         <td>${closeProb}</td>
                         <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${lead.next_action || ''}">${lead.next_action || '-'}</td>
                         <td>${nextActionDate}</td>
+                        <td style="color: #6366f1; font-weight: 500;">${assignedAgent}</td>
                     </tr>
                 `;
             }).join('');
@@ -1407,8 +1454,62 @@
 
         // Modal functions
         let currentEditingLead = null;
+        let availableAgents = [];
 
-        function showAddLeadModal() {
+        // Load available agents for assignment
+        async function loadAvailableAgents() {
+            try {
+                // All users can see all agents in dropdown for assignment flexibility
+                const { data: employees, error } = await supabaseClient
+                    .from('employees')
+                    .select('*')
+                    .eq('is_active', true)
+                    .in('role', ['employee', 'sales', 'staff', 'admin', 'super_admin'])
+                    .order('first_name');
+                
+                if (error) {
+                    console.error('Error loading employees:', error);
+                    availableAgents = [];
+                    return;
+                }
+
+                availableAgents = employees || [];
+
+            } catch (error) {
+                console.error('Error loading agents:', error);
+                availableAgents = [];
+            }
+        }
+
+        function populateAgentDropdown(selectId, currentValue = '') {
+            const select = document.getElementById(selectId);
+            select.innerHTML = '<option value="">Select agent...</option>';
+            
+            availableAgents.forEach(agent => {
+                const option = document.createElement('option');
+                option.value = agent.id;
+                option.textContent = `${agent.first_name} ${agent.last_name} (${formatRank(agent.role)})`;
+                if (agent.id === currentValue) {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+        }
+
+        function formatRank(rank) {
+            const names = {
+                'super_admin': 'Super Admin',
+                'admin': 'Admin',
+                'sales': 'Sales',
+                'staff': 'Staff',
+                'employee': 'Employee'
+            };
+            return names[rank] || rank;
+        }
+
+        async function showAddLeadModal() {
+            await loadAvailableAgents();
+            populateAgentDropdown('leadAssignedAgent');
             document.getElementById('addLeadModal').classList.add('active');
             document.getElementById('addLeadForm').reset();
             document.getElementById('leadSuccessMessage').style.display = 'none';
@@ -1419,7 +1520,8 @@
             document.getElementById('addLeadModal').classList.remove('active');
         }
 
-        function showEditLeadModal(lead) {
+        async function showEditLeadModal(lead) {
+            await loadAvailableAgents();
             const modal = document.getElementById('editLeadModal');
             
             console.log('Opening lead for editing:', lead);
@@ -1437,12 +1539,21 @@
             document.getElementById('editCompanyLocation').value = lead.company_location || '';
             document.getElementById('editCompanySize').value = lead.company_size || '';
             document.getElementById('editStatus').value = lead.status || 'new';
+            document.getElementById('editTier').value = lead.tier || '';
+            document.getElementById('editEstValue').value = lead.estimated_monthly_value || '';
+            document.getElementById('editCloseProb').value = lead.close_probability || '';
+            document.getElementById('editNextAction').value = lead.next_action || '';
+            document.getElementById('editNextActionDate').value = lead.next_action_date ? lead.next_action_date.split('T')[0] : '';
+            document.getElementById('editAssignedAgent').value = lead.assigned_agent || '';
             document.getElementById('editStartDate').value = lead.start_date || '';
             document.getElementById('editDecisionMaker').value = lead.decision_maker !== null ? String(lead.decision_maker) : '';
             document.getElementById('editClientHealth').value = lead.client_health || '';
             document.getElementById('editScopePressure').value = lead.scope_pressure || '';
             document.getElementById('editActiveClient').checked = lead.active_client || false;
             document.getElementById('editNotes').value = lead.notes || '';
+            
+            // Populate agent dropdown and set current value
+            populateAgentDropdown('editAssignedAgent', lead.assigned_employee_id);
             
             // Set modal title
             document.getElementById('editModalTitle').textContent = `Edit: ${lead.full_name || lead.email || 'Lead'}`;
@@ -1593,6 +1704,12 @@
                     client_health: document.getElementById('leadClientHealth').value || null,
                     scope_pressure: document.getElementById('leadScopePressure').value || null,
                     status: document.getElementById('leadStatus').value || 'Identified',
+                    tier: document.getElementById('leadTier').value || null,
+                    estimated_monthly_value: document.getElementById('leadEstValue').value ? parseFloat(document.getElementById('leadEstValue').value) : null,
+                    close_probability: document.getElementById('leadCloseProb').value ? parseFloat(document.getElementById('leadCloseProb').value) : null,
+                    next_action: document.getElementById('leadNextAction').value || null,
+                    next_action_date: document.getElementById('leadNextActionDate').value || null,
+                    assigned_employee_id: document.getElementById('leadAssignedAgent').value || null,
                     notes: document.getElementById('leadNotes').value || null,
                     source: 'manual',
                     source_page: 'leads_dashboard'
@@ -1658,6 +1775,12 @@
                     decision_maker: document.getElementById('editDecisionMaker').value ? (document.getElementById('editDecisionMaker').value === 'true') : null,
                     client_health: document.getElementById('editClientHealth').value || null,
                     scope_pressure: document.getElementById('editScopePressure').value || null,
+                    tier: document.getElementById('editTier').value || null,
+                    estimated_monthly_value: document.getElementById('editEstValue').value ? parseFloat(document.getElementById('editEstValue').value) : null,
+                    close_probability: document.getElementById('editCloseProb').value ? parseFloat(document.getElementById('editCloseProb').value) : null,
+                    next_action: document.getElementById('editNextAction').value || null,
+                    next_action_date: document.getElementById('editNextActionDate').value || null,
+                    assigned_employee_id: document.getElementById('editAssignedAgent').value || null,
                     active_client: document.getElementById('editActiveClient').checked,
                     notes: document.getElementById('editNotes').value || null
                 };
@@ -2047,6 +2170,63 @@
                         </select>
                     </div>
 
+                    <!-- Deal Information -->
+                    <div class="form-section-title">Deal Information</div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Est. Monthly Value ($)</label>
+                            <input type="number" id="leadEstValue" class="form-input" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Close Probability (%)</label>
+                            <input type="number" id="leadCloseProb" class="form-input" min="0" max="100" placeholder="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Tier</label>
+                        <select id="leadTier" class="form-select">
+                            <option value="">Select tier...</option>
+                            <option value="Free Consult">Free Consult</option>
+                            <option value="Starter">Starter</option>
+                            <option value="Growth">Growth</option>
+                            <option value="Enterprise">Enterprise</option>
+                        </select>
+                    </div>
+
+                    <!-- Next Actions -->
+                    <div class="form-section-title">Next Actions</div>
+
+                    <div class="form-group">
+                        <label class="form-label">Next Action</label>
+                        <select id="leadNextAction" class="form-input">
+                            <option value="">Select an action...</option>
+                            <option value="Follow up call">Follow up call</option>
+                            <option value="Send proposal">Send proposal</option>
+                            <option value="Schedule meeting">Schedule meeting</option>
+                            <option value="Send contract">Send contract</option>
+                            <option value="Check-in email">Check-in email</option>
+                            <option value="Demo/presentation">Demo/presentation</option>
+                            <option value="Negotiate terms">Negotiate terms</option>
+                            <option value="Request decision">Request decision</option>
+                            <option value="Onboarding call">Onboarding call</option>
+                            <option value="Quarterly review">Quarterly review</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Due Date</label>
+                        <input type="date" id="leadNextActionDate" class="form-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Assigned Agent</label>
+                        <select id="leadAssignedAgent" class="form-select">
+                            <option value="">Select agent...</option>
+                        </select>
+                    </div>
+
                     <div class="form-group">
                         <label class="form-label">Notes</label>
                         <textarea id="leadNotes" class="form-input" rows="3" placeholder="Meeting notes, context, or any other relevant information..."></textarea>
@@ -2280,6 +2460,13 @@
                             <input type="date" id="editNextActionDate" class="form-input">
                         </div>
 
+                        <div class="form-group">
+                            <label class="form-label">Assigned Agent</label>
+                            <select id="editAssignedAgent" class="form-select">
+                                <option value="">Select agent...</option>
+                            </select>
+                        </div>
+
                         <!-- Notes -->
                         <div class="form-section-title">Notes</div>
 
@@ -2317,13 +2504,44 @@
     </div>
 
     <script>
-        // Check authentication (uses supabaseClient from supabase-config.js)
-        supabaseClient.auth.getSession().then(({ data: { session } }) => {
+        // Global variable to store current user info
+        let currentUser = null;
+
+        // Check authentication and load user info (uses supabaseClient from supabase-config.js)
+        supabaseClient.auth.getSession().then(async ({ data: { session } }) => {
             if (!session) {
                 // Redirect to employee portal login
                 window.location.href = 'employee.html';
+            } else {
+                // Load and display user's first name and role
+                await loadWelcomeMessage(session.user.email);
             }
         });
+
+        // Load welcome message with user's first name
+        async function loadWelcomeMessage(email) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('employees')
+                    .select('id, first_name, role')
+                    .eq('email', email)
+                    .single();
+
+                if (error) throw error;
+
+                if (data) {
+                    // Store current user info globally
+                    currentUser = data;
+                    
+                    if (data.first_name) {
+                        document.getElementById('userName').textContent = data.first_name;
+                        document.getElementById('welcomeMessage').style.display = 'inline';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading user name:', error);
+            }
+        }
 
         // Handle logout
         async function logout() {
