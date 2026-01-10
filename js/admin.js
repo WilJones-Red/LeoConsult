@@ -62,10 +62,7 @@ async function login() {
             console.warn('Unauthorized access attempt by:', data.user.email);
             errorEl.textContent = 'Access denied. You do not have admin privileges.';
             
-            // Sign out the unauthorized user
-            await supabaseClient.auth.signOut();
-            
-            // Show access denied screen
+            // Show access denied screen (do not sign out - user may be valid employee accessing other pages)
             document.getElementById('auth-container').style.display = 'none';
             document.getElementById('access-denied').style.display = 'block';
             return;
