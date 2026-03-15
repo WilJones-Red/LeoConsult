@@ -2881,12 +2881,12 @@ a {
     text-align: center;
 }
 
-.cta-content h2 {
+.service-cta .cta-content h2 {
     color: white;
     margin-bottom: 1.5rem;
 }
 
-.cta-content p {
+.service-cta .cta-content p {
     font-size: 1.2rem;
     opacity: 0.9;
     margin-bottom: 2rem;
