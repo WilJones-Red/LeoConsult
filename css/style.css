@@ -564,6 +564,10 @@ a {
     animation: fadeInUp 0.8s ease-out 0.2s forwards;
 }
 
+.hero-title-emphasis {
+    font-weight: 900;
+}
+
 .hero-description {
     font-size: 1.25rem;
     color: #2c3e50;
@@ -589,6 +593,10 @@ a {
     opacity: 0;
     transform: translateY(30px);
     animation: fadeInUp 0.8s ease-out 0.5s forwards;
+}
+
+.hero-supporting-line {
+    display: block;
 }
 
 /* Hero Form Styles */
