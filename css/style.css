@@ -1356,6 +1356,11 @@ a {
     box-shadow: 0 4px 12px rgba(30, 64, 175, 0.25);
 }
 
+.point-icon.character-icon {
+    background: transparent;
+    box-shadow: none;
+}
+
 .point-icon img {
     width: 90px;
     height: 90px;
