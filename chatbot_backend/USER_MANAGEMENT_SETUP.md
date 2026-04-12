@@ -1,4 +1,4 @@
-# User Management Setup Guide
+﻿# User Management Setup Guide
 
 This guide will help you set up the database-driven admin authorization system.
 
@@ -14,7 +14,7 @@ This guide will help you set up the database-driven admin authorization system.
 This will:
 - Create the `authorized_admins` table
 - Add indexes for performance
-- Insert your email (official@wilkinjones.com) as the super_admin
+- Insert your email (hello@leoconsult.org) as the super_admin
 - Set up Row Level Security (RLS) policies
 - Create automatic timestamp updates
 
@@ -45,7 +45,7 @@ This will:
 - **Activate**: Restore access to a deactivated admin
 - **Delete**: Permanently remove an admin (cannot be undone)
 
-**Note**: You cannot deactivate or delete yourself (official@wilkinjones.com)
+**Note**: You cannot deactivate or delete yourself (hello@leoconsult.org)
 
 ## Roles Explained
 

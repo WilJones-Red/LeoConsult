@@ -1,7 +1,7 @@
-question,answer,tags,locale,last_updated
+﻿question,answer,tags,locale,last_updated
 What is Leo Consult?,"Leo Consult is an AI–Data Analysis company providing data analytics, business consulting, and implementation support.","about,services,brand",US,8/1/2025
 What services do you offer?,"We offer Data Analytics, Business Consulting, and Implementation Support.",services,US,8/2/2025
-How do I start a project with you?,"Schedule a call at https://calendly.com/official-wilkinjones/30min or email official@wilkinjones.com. We’ll scope goals and data access, then provide next steps.","onboarding,contact,cta",US,8/3/2025
+How do I start a project with you?,"Schedule a call at https://calendly.com/official-wilkinjones/30min or email hello@leoconsult.org. We’ll scope goals and data access, then provide next steps.","onboarding,contact,cta",US,8/3/2025
 Do you offer a free consultation or audit?,Yes. We offer a free data audit that delivers 3–5 actionable insights tailored to your business.,"data_audit,pricing,onboarding",US,8/4/2025
 What is your pricing?,"Pricing varies by project scope, typically between $500 and $7,000. Contact us for a quote.","pricing,quote",US,8/5/2025
 Do you offer refunds?,No refunds. Front-end payment is required unless a different agreement is reached in writing.,"refunds,policy,payment",US,8/6/2025
@@ -11,7 +11,7 @@ Do you provide ongoing maintenance?,Yes. We can provide monthly maintenance or i
 What are your business hours?,We work around the clock. Our home timezone is Mountain Standard Time (MST).,"hours,timezone,coverage",US,8/10/2025
 What languages do you support?,We currently support English.,"language,coverage",US,8/11/2025
 Which regions do you serve?,We operate remotely and can support clients globally. Scheduling is anchored to MST.,"coverage,timezone",US,8/12/2025
-How do I contact support?,Email official@wilkinjones.com or schedule a call at https://calendly.com/official-wilkinjones/30min.,"contact,onboarding,cta",US,8/13/2025
+How do I contact support?,Email hello@leoconsult.org or schedule a call at https://calendly.com/official-wilkinjones/30min.,"contact,onboarding,cta",US,8/13/2025
 When will the agent escalate to a human?,"If the bot is not confident, you’re upset, or you request human help, we escalate to a human specialist via email.","escalation,policy,contact",US,8/14/2025
 "Can the agent answer legal questions, custom pricing, or partnerships?","No. Legal topics, custom pricing specifics, and partnership inquiries are escalated to a human.","disallowed,legal,custom_pricing,partnerships,escalation",US,8/15/2025
 Do you store personal data?,We ensure strong data privacy and do not store sensitive PII unnecessarily. NDA is available upon request.,"privacy,security,nda",US,8/16/2025

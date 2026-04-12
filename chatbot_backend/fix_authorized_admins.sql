@@ -1,4 +1,4 @@
--- Drop the problematic table and start fresh
+﻿-- Drop the problematic table and start fresh
 DROP TABLE IF EXISTS authorized_admins CASCADE;
 
 -- Create a clean, simple table
@@ -11,7 +11,7 @@ CREATE TABLE authorized_admins (
 
 -- Add your email as the first admin
 INSERT INTO authorized_admins (email, role)
-VALUES ('official@wilkinjones.com', 'super_admin');
+VALUES ('hello@leoconsult.org', 'super_admin');
 
 -- Verify it worked
 SELECT * FROM authorized_admins;

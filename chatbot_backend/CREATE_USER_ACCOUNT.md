@@ -1,4 +1,4 @@
-# Create User Account in Supabase
+﻿# Create User Account in Supabase
 
 You need to create a user account in Supabase Authentication before you can login.
 
@@ -11,7 +11,7 @@ You need to create a user account in Supabase Authentication before you can logi
 5. Click **Add user** (green button in top right)
 6. **IMPORTANT**: Click "Create new user"
 7. Enter your details:
-   - **Email**: `official@wilkinjones.com`
+   - **Email**: `hello@leoconsult.org`
    - **Password**: Choose a secure password
    - **Auto Confirm User**: ✅ Check this box (important!)
 8. Click **Create User**
@@ -24,7 +24,7 @@ Go to SQL Editor in Supabase and run:
 -- Create user account for admin
 -- Replace 'YOUR_PASSWORD_HERE' with your actual password
 SELECT auth.create_user(
-  email := 'official@wilkinjones.com',
+  email := 'hello@leoconsult.org',
   password := 'YOUR_PASSWORD_HERE',
   email_confirm := true
 );
@@ -35,14 +35,14 @@ SELECT auth.create_user(
 After creating the user:
 
 1. Go to **Authentication > Users** in Supabase
-2. You should see `official@wilkinjones.com` in the list
+2. You should see `hello@leoconsult.org` in the list
 3. Make sure the user shows as "Confirmed" (green checkmark)
 
 ## Then Try Login Again
 
 Once the user is created:
 1. Refresh your admin page
-2. Enter email: `official@wilkinjones.com`
+2. Enter email: `hello@leoconsult.org`
 3. Enter the password you just set
 4. Click Sign In
 

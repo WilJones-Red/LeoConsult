@@ -1,4 +1,4 @@
-# LeoConsult - Data Analytics & Business Consulting Website
+﻿# LeoConsult - Data Analytics & Business Consulting Website
 
 A fully functional, conversion-optimized website for a Data Analytics and Business Consulting business, built with modern web technologies and sales funnel optimization.
 
@@ -274,7 +274,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📧 Contact
 
 For questions about this template or customization services:
-- **Email**: official@wilkinjones.com
+- **Email**: hello@leoconsult.org
 - **Phone**: +1 (555) 123-4567
 - **Website**: [www.leoconsult.com](https://www.leoconsult.com)
 

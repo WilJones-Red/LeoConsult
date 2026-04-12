@@ -1,4 +1,4 @@
--- Create the authorized_admins table for managing admin access
+﻿-- Create the authorized_admins table for managing admin access
 CREATE TABLE IF NOT EXISTS authorized_admins (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     email TEXT NOT NULL UNIQUE,
@@ -14,7 +14,7 @@ CREATE INDEX IF NOT EXISTS idx_authorized_admins_is_active ON authorized_admins(
 
 -- Add the primary admin (you)
 INSERT INTO authorized_admins (email, role, is_active)
-VALUES ('official@wilkinjones.com', 'super_admin', true)
+VALUES ('hello@leoconsult.org', 'super_admin', true)
 ON CONFLICT (email) DO NOTHING;
 
 -- Enable Row Level Security

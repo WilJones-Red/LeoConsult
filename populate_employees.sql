@@ -1,4 +1,4 @@
--- ========================================
+﻿-- ========================================
 -- HELPER: Populate Employees Table from Auth Users
 -- ========================================
 -- This script helps you manually insert employees into the employees table
@@ -8,7 +8,7 @@
 INSERT INTO public.employees (email, first_name, last_name, phone, role, is_active)
 VALUES 
     ('i.a.gilson12@gmail.com', 'Isabella', 'Gilson', NULL, 'admin', true),
-    ('official@wilkinjones.com', 'Wilkin', 'Jones', NULL, 'super_admin', true)
+    ('hello@leoconsult.org', 'Wilkin', 'Jones', NULL, 'super_admin', true)
 ON CONFLICT (email) DO NOTHING;
 
 -- Query to see all employees
